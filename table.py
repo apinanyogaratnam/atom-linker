@@ -2,19 +2,30 @@ from typing import Any
 
 
 class Table:
+    """Represents a table.
+
+    Args:
+    ----
+        name (str): The name of the table.
+        columns (dict): A dictionary representing the columns of the table.
+
+    Returns:
+    -------
+        None
+    """
+
     def __init__(self, name: str, columns: dict) -> None:
-        """
-            Initializes a new instance of the class.
+        """Initialize a new instance of the class.
 
-            Args:
-            ----
-            self: The current object.
-            name (str): The name of the instance.
-            columns (dict): A dictionary representing the columns of the instance.
+        Args:
+        ----
+        self: The current object.
+        name (str): The name of the instance.
+        columns (dict): A dictionary representing the columns of the instance.
 
-            Returns:
-            -------
-            None
+        Returns:
+        -------
+        None
         """
         self.name = name
         self.columns = columns
@@ -22,31 +33,30 @@ class Table:
         self.records = {}
 
     def insert_record(self, record: dict[str, Any]) -> int:
-        """
-            Inserts a record into the instance.
+        """Insert a record into the instance.
 
-            Args:
-            ----
-            self: The current object.
-            record (dict): A dictionary representing the record to insert.
+        Args:
+        ----
+        self: The current object.
+        record (dict): A dictionary representing the record to insert.
 
-            Raises:
-            ------
-            ValueError: If the record is empty or not a dictionary.
-            ValueError: If a column name is missing from the record.
-            ValueError: If a column value is missing from the record.
-            ValueError: If a column value is not the correct type.
+        Raises:
+        ------
+        ValueError: If the record is empty.
+        TypeError: If the record is not a dictionary.
+        ValueError: If the record does not have a value for a column.
+        TypeError: If the record value for a column is not the correct type.
 
-            Returns:
-            -------
-            int: The id of the record.
+        Returns:
+        -------
+        int: The id of the record.
         """
         if not record:
             msg = "Record must have a value."
             raise ValueError(msg)
         if not isinstance(record, dict):
             msg = "Record must be a dictionary."
-            raise ValueError(msg)
+            raise TypeError(msg)
 
         for column_name, column_type in self.columns.items():
             if column_name not in record:
@@ -54,39 +64,41 @@ class Table:
                 raise ValueError(msg)
             if not isinstance(record[column_name], column_type):
                 msg = f"Record value for {column_name} must be {column_type}."
-                raise ValueError(msg)
+                raise TypeError(msg)
 
         self.count += 1
         self.records[self.count] = record
 
         return self.count
 
-    def get_record_by_id(self, id: int) -> Any:
+    def get_record_by_id(self, record_id: int) -> object:
+        """Get a record from the instance by record_id.
+
+        Args:
+        ----
+        self: The current object.
+        record_id (int): The id of the record to get.
+
+        Raises:
+        ------
+        ValueError: If the id is empty.
+        TypeError: If the id is not an integer.
+        ValueError: If the record does not exist.
+
+        Returns:
+        -------
+        object: The record.
         """
-            Gets a record from the instance by id.
-
-            Args:
-            ----
-            self: The current object.
-            id (int): The id of the record to get.
-
-            Raises:
-            ------
-            ValueError: If the id is empty or not an integer.
-            ValueError: If the record does not exist.
-
-            Returns:
-            -------
-            Any: The record.
-        """
-        if not id:
+        if not record_id:
             msg = "Id must have a value."
             raise ValueError(msg)
-        if not isinstance(id, int):
+        if not isinstance(record_id, int):
             msg = "Id must be an integer."
+            raise TypeError(msg)
+
+        record = self.records.get(record_id)
+        if not record:
+            msg = f"Record with id {record_id} does not exist."
             raise ValueError(msg)
 
-        record = self.records.get(id)
-        if not record:
-            msg = f"Record with id {id} does not exist."
-            raise ValueError(msg)
+        return record
