@@ -1,4 +1,5 @@
 from table import Table
+from typing import Union
 
 
 class Database:
@@ -43,6 +44,15 @@ class Database:
         self.name = name
         self.tables = {}
 
+    def is_type_or_union_of_types(self, x) -> bool:
+        if isinstance(x, type):
+            return True
+
+        if getattr(x, '__origin__', None) is Union:
+            return all(isinstance(t, type) for t in x.__args__)
+
+        return False
+
     def __validate_create_table_columns(self, columns: dict) -> None:
         """Validate the arguments for the create_table method.
 
@@ -72,8 +82,9 @@ class Database:
             if not isinstance(column_name, str):
                 msg = "Column name must be a string."
                 raise TypeError(msg)
-            if not isinstance(column_type, type):
-                msg = "Column type must be a type."
+            print(column_type, type(column_type))
+            if not self.is_type_or_union_of_types(column_type):
+                msg = "Column type must be a type or union of types."
                 raise TypeError(msg)
 
     def __validate_create_table(self, name: str, columns: dict) -> None:

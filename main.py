@@ -1,5 +1,6 @@
 import logging
 from datetime import datetime
+from typing import Union
 
 import pytz
 
@@ -35,7 +36,7 @@ def main() -> None:
             "email": str,
             "created_at": datetime,
             "updated_at": datetime,
-            # "deleted_at": datetime, # NOTE: need to figure out how to make this optional
+            "deleted_at": Union[datetime, None], # NOTE: nullable field
         },
     )
 
@@ -48,6 +49,7 @@ def main() -> None:
             "email": "johndoe@email.com",
             "created_at": datetime.now(tz=pytz.UTC),
             "updated_at": datetime.now(tz=pytz.UTC),
+            "deleted_at": None,
         },
     )
 
