@@ -1,0 +1,62 @@
+[tool.ruff]
+line-length = 120
+select = [
+    "F",
+    "E",
+    "W",
+    "C90",
+    "I",
+    "N",
+    "D",
+    "UP",
+    "YTT",
+    "ANN",
+    "S",
+    "BLE",
+    "B",
+    "A",
+    "COM",
+    "C4",
+    "DTZ",
+    "T10",
+    "EM",
+    "ICN",
+    "G",
+    "INP",
+    "PIE",
+    "T20",
+    "PT",
+    "Q",
+    "RSE",
+    "RET",
+    "SLF",
+    "SIM",
+    "TID",
+    "TD",
+    "ERA",
+    "PD",
+    "PL",
+    "TRY",
+    "FLY",
+    "PERF",
+    "RUF",
+]
+ignore = [
+    "E712",
+    "E711",
+    "ANN101",  # missing-type-self
+    "D100",  # Missing docstring in public module
+    "D104",  # Missing docstring in public package
+    "D203",  # 1 blank line required before class docstring
+    "D213",  # Multi-line docstring summary should start at the second line
+    "ERA001",  # Found commented-out code (ignore to avoid unintentionally deleting code when running --fix)
+    "G004",  # Logging statement uses f-string
+    "RUF005", # Consider {expr} instead of concatenation
+    "E712", # Comparison to True should be 'if cond is True:' or 'if cond:'
+    "E711", # Comparison to None should be 'if cond is None:' or 'if cond is not None:'
+]
+exclude = [
+    ".git",
+    "__pycache__",
+]
+target-version = "py310"

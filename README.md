@@ -1,0 +1,7 @@
+- indexes
+- relations (pk and fk)
+- locks
+- stats
+- disk storage
+- network
+- json storage
