@@ -4,7 +4,7 @@ from database import Database
 
 
 def main():
-    db = Database()
+    db = Database('test')
 
     db.create_table(
         "users",
@@ -20,6 +20,17 @@ def main():
 
     users = db.get_table("users")
 
+    id = users.insert_record(
+        {
+            "first_name": "John",
+            "last_name": "Doe",
+            "email": "johndoe@email.com",
+            "created_at": datetime.now(),
+            "updated_at": datetime.now(),
+        }
+    )
+
+    users.get_record_by_id(1)
 
 if __name__ == "__main__":
     main()
