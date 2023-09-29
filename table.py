@@ -330,15 +330,12 @@ class Table:
             msg = f"Column {column_name} does not exist."
             raise ValueError(msg)
 
-        records = []
+        record_ids = set()
         if column_name in self.indexes and column_value in self.indexes[column_name]:
-            records.extend(
-                self.records[record_id]
-                for record_id in self.indexes[column_name][column_value]
-            )
+            record_ids = set(self.indexes[column_name][column_value])
 
         if column_name in self.unique_indexes and column_value in self.unique_indexes[column_name]:
             record_id = self.unique_indexes[column_name][column_value]
-            records.append(self.records[record_id])
+            record_ids.add(record_id)
 
-        return records
+        return [self.records[record_id] for record_id in record_ids]
