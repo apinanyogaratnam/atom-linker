@@ -74,6 +74,8 @@ def main() -> None:
     jane_record = users.get_record_by_id(jane_record_id)
 
     records = users.get_records_by_column("email", "johndoe@email.com")
+    records = users.get_records_by_column("first_name", "John")
+    records = users.get_records_by_column("last_name", "Doe")
 
     # logger.debug(john_record)
     # logger.debug(jane_record)
