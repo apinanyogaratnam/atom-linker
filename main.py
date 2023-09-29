@@ -45,7 +45,7 @@ def main() -> None:
 
     users = db.get_table(table_name)
 
-    record_id = users.insert_record(
+    john_record_id = users.insert_record(
         {
             "first_name": "John",
             "last_name": "Doe",
@@ -57,8 +57,26 @@ def main() -> None:
     )
 
     users.create_unique_index("email")
-    record = users.get_record_by_id(record_id)
-    logger.debug(record)
+    users.create_index("first_name")
+
+    jane_record_id = users.insert_record(
+        {
+            "first_name": "Jane",
+            "last_name": "Doe",
+            "email": "janedoe@email.com",
+            "created_at": datetime.now(tz=pytz.UTC),
+            "updated_at": datetime.now(tz=pytz.UTC),
+            "deleted_at": None,
+        },
+    )
+
+    john_record = users.get_record_by_id(john_record_id)
+    jane_record = users.get_record_by_id(jane_record_id)
+
+    logger.debug(john_record)
+    logger.debug(jane_record)
+    logger.debug(users.indexes)
+    logger.debug(users.unique_indexes)
 
     db.drop_table(table_name)
 
