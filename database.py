@@ -1,5 +1,6 @@
-from table import Table
 from typing import Union
+
+from table import Table
 
 
 class Database:
@@ -44,11 +45,22 @@ class Database:
         self.name = name
         self.tables = {}
 
-    def is_type_or_union_of_types(self, x) -> bool:
+    def is_type_or_union_of_types(self, x: object) -> bool:
+        """Check if the given object is a type or a union of types.
+
+        Args:
+        ----
+        self: The current object.
+        x: The object to check.
+
+        Returns:
+        -------
+        bool: True if the object is a type or a union of types, False otherwise.
+        """
         if isinstance(x, type):
             return True
 
-        if getattr(x, '__origin__', None) is Union:
+        if getattr(x, "__origin__", None) is Union:
             return all(isinstance(t, type) for t in x.__args__)
 
         return False
@@ -82,7 +94,6 @@ class Database:
             if not isinstance(column_name, str):
                 msg = "Column name must be a string."
                 raise TypeError(msg)
-            print(column_type, type(column_type))
             if not self.is_type_or_union_of_types(column_type):
                 msg = "Column type must be a type or union of types."
                 raise TypeError(msg)
@@ -180,3 +191,25 @@ class Database:
             raise ValueError(msg)
 
         return self.tables[name]
+
+    def drop_table(self, name: str) -> None:
+        """Drop a table from the database.
+
+        Args:
+        ----
+        self: The current object.
+        name (str): The name of the table to drop.
+
+        Raises:
+        ------
+        ValueError: If the table does not exist.
+
+        Returns:
+        -------
+        None
+        """
+        if name not in self.tables:
+            msg = f"Table {name} does not exist."
+            raise ValueError(msg)
+
+        del self.tables[name]
