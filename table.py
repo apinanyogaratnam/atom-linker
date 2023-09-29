@@ -178,3 +178,53 @@ class Table:
         self.records[record_id] = record
 
         return self.records[record_id]
+
+    def __validate_delete_record_by_id(self, record_id: int) -> None:
+        """Validate the arguments for the delete_record_by_id method.
+
+        Args:
+        ----
+        self: The current object.
+        record_id (int): The id of the record to delete.
+
+        Raises:
+        ------
+        ValueError: If the id is empty.
+        TypeError: If the id is not an integer.
+        ValueError: If the record does not exist.
+
+        Returns:
+        -------
+        None
+        """
+        if not record_id:
+            msg = "Id must have a value."
+            raise ValueError(msg)
+        if not isinstance(record_id, int):
+            msg = "Id must be an integer."
+            raise TypeError(msg)
+
+        if record_id not in self.records:
+            msg = f"Record with id {record_id} does not exist."
+            raise ValueError(msg)
+
+    def delete_record_by_id(self, record_id: int) -> None:
+        """Delete a record from the instance by record_id.
+
+        Args:
+        ----
+        self: The current object.
+        record_id (int): The id of the record to delete.
+
+        Raises:
+        ------
+        ValueError: If the id is empty.
+        TypeError: If the id is not an integer.
+        ValueError: If the record does not exist.
+
+        Returns:
+        -------
+        None
+        """
+        self.__validate_delete_record_by_id(record_id)
+        del self.records[record_id]
