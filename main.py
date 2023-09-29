@@ -56,6 +56,7 @@ def main() -> None:
         },
     )
 
+    users.create_unique_index("email")
     record = users.get_record_by_id(record_id)
     logger.debug(record)
 

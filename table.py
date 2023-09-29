@@ -57,6 +57,20 @@ class Table:
         self.count += 1
         self.records[self.count] = record
 
+        for column_name, column_value in record.items():
+            if column_name in self.indexes:
+                if column_value not in self.indexes[column_name]:
+                    self.indexes[column_name][column_value] = []
+
+                self.indexes[column_name][column_value].append(self.count)
+
+            if column_name in self.unique_indexes:
+                if column_value in self.unique_indexes[column_name]:
+                    msg = f"Value {column_value} for column {column_name} is not unique."
+                    raise ValueError(msg)
+
+                self.unique_indexes[column_name][column_value] = self.count
+
         return self.count
 
     def get_record_by_id(self, record_id: int) -> object:
