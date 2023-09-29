@@ -42,8 +42,6 @@ select = [
     "RUF",
 ]
 ignore = [
-    "E712",
-    "E711",
     "ANN101",  # missing-type-self
     "D100",  # Missing docstring in public module
     "D104",  # Missing docstring in public package
@@ -54,6 +52,7 @@ ignore = [
     "RUF005", # Consider {expr} instead of concatenation
     "E712", # Comparison to True should be 'if cond is True:' or 'if cond:'
     "E711", # Comparison to None should be 'if cond is None:' or 'if cond is not None:'
+    "UP007", # Use `X | Y` for type annotations
 ]
 exclude = [
     ".git",
