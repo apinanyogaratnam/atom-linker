@@ -308,3 +308,37 @@ class Table:
                 self.indexes[column_name][value] = []
 
             self.indexes[column_name][value].append(record_id)
+
+    def get_records_by_column(self, column_name: str, column_value: object) -> list[object]:
+        """Get records from the instance by column_name and column_value.
+
+        Args:
+        ----
+        self: The current object.
+        column_name (str): The name of the column to get records by.
+        column_value (object): The value of the column to get records by.
+
+        Raises:
+        ------
+        ValueError: If the column does not exist.
+
+        Returns:
+        -------
+        list: A list of records.
+        """
+        if column_name not in self.columns:
+            msg = f"Column {column_name} does not exist."
+            raise ValueError(msg)
+
+        records = []
+        if column_name in self.indexes and column_value in self.indexes[column_name]:
+            records.extend(
+                self.records[record_id]
+                for record_id in self.indexes[column_name][column_value]
+            )
+
+        if column_name in self.unique_indexes and column_value in self.unique_indexes[column_name]:
+            record_id = self.unique_indexes[column_name][column_value]
+            records.append(self.records[record_id])
+
+        return records
