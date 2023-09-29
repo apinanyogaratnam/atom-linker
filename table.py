@@ -51,21 +51,7 @@ class Table:
         -------
         int: The id of the record.
         """
-        if not record:
-            msg = "Record must have a value."
-            raise ValueError(msg)
-        if not isinstance(record, dict):
-            msg = "Record must be a dictionary."
-            raise TypeError(msg)
-
-        for column_name, column_type in self.columns.items():
-            if column_name not in record:
-                msg = f"Record must have a value for {column_name}."
-                raise ValueError(msg)
-            if not isinstance(record[column_name], column_type):
-                msg = f"Record value for {column_name} must be {column_type}."
-                raise TypeError(msg)
-
+        self.__validate_record(record)
         self.count += 1
         self.records[self.count] = record
 
@@ -132,13 +118,36 @@ class Table:
         if not isinstance(record_id, int):
             msg = "Id must be an integer."
             raise TypeError(msg)
+        self.__validate_record(record)
+        if record_id not in self.records:
+            msg = f"Record with id {record_id} does not exist."
+            raise ValueError(msg)
+
+    def __validate_record(self, record: dict[str, Any]) -> None:
+        """Validate the arguments for the insert_record and update_record_by_id methods.
+
+        Args:
+        ----
+        self: The current object.
+        record (dict): A dictionary representing the record to insert or update.
+
+        Raises:
+        ------
+        ValueError: If the record is empty.
+        TypeError: If the record is not a dictionary.
+        ValueError: If the record does not have a value for a column.
+        TypeError: If the record value for a column is not the correct type.
+
+        Returns:
+        -------
+        None
+        """
         if not record:
             msg = "Record must have a value."
             raise ValueError(msg)
         if not isinstance(record, dict):
             msg = "Record must be a dictionary."
             raise TypeError(msg)
-
         for column_name, column_type in self.columns.items():
             if column_name not in record:
                 msg = f"Record must have a value for {column_name}."
@@ -146,10 +155,6 @@ class Table:
             if not isinstance(record[column_name], column_type):
                 msg = f"Record value for {column_name} must be {column_type}."
                 raise TypeError(msg)
-
-        if record_id not in self.records:
-            msg = f"Record with id {record_id} does not exist."
-            raise ValueError(msg)
 
     def update_record_by_id(self, record_id: int, record: dict[str, Any]) -> object:
         """Update a record in the instance by record_id.
