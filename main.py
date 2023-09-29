@@ -73,10 +73,13 @@ def main() -> None:
     john_record = users.get_record_by_id(john_record_id)
     jane_record = users.get_record_by_id(jane_record_id)
 
-    logger.debug(john_record)
-    logger.debug(jane_record)
+    records = users.get_records_by_column("email", "johndoe@email.com")
+
+    # logger.debug(john_record)
+    # logger.debug(jane_record)
     logger.debug(users.indexes)
     logger.debug(users.unique_indexes)
+    logger.debug(records)
 
     db.drop_table(table_name)
 
