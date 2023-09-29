@@ -31,6 +31,8 @@ class Table:
         self.columns = columns
         self.count = 0
         self.records = {}
+        self.indexes = {}
+        self.unique_indexes = {}
 
     def insert_record(self, record: dict[str, Any]) -> int:
         """Insert a record into the instance.
@@ -233,3 +235,62 @@ class Table:
         """
         self.__validate_delete_record_by_id(record_id)
         del self.records[record_id]
+
+    def create_unique_index(self, column_name: str) -> None:
+        """Create a unique index on a column.
+
+        Args:
+        ----
+        self: The current object.
+        column_name (str): The name of the column to create a unique index on.
+
+        Raises:
+        ------
+        ValueError: If the column does not exist.
+
+        Returns:
+        -------
+        None
+        """
+        if column_name not in self.columns:
+            msg = f"Column {column_name} does not exist."
+            raise ValueError(msg)
+
+        self.unique_indexes[column_name] = {}
+
+        for record_id, record in self.records.items():
+            value = record[column_name]
+            if value in self.unique_indexes[column_name]:
+                msg = f"Value {value} for column {column_name} is not unique."
+                raise ValueError(msg)
+
+            self.unique_indexes[column_name][value] = record_id
+
+    def create_index(self, column_name: str) -> None:
+        """Create an index on a column.
+
+        Args:
+        ----
+        self: The current object.
+        column_name (str): The name of the column to create an index on.
+
+        Raises:
+        ------
+        ValueError: If the column does not exist.
+
+        Returns:
+        -------
+        None
+        """
+        if column_name not in self.columns:
+            msg = f"Column {column_name} does not exist."
+            raise ValueError(msg)
+
+        self.indexes[column_name] = {}
+
+        for record_id, record in self.records.items():
+            value = record[column_name]
+            if value not in self.indexes[column_name]:
+                self.indexes[column_name][value] = []
+
+            self.indexes[column_name][value].append(record_id)
