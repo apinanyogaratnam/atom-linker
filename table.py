@@ -330,12 +330,20 @@ class Table:
             msg = f"Column {column_name} does not exist."
             raise ValueError(msg)
 
+        is_indexed = False
         record_ids = set()
         if column_name in self.indexes and column_value in self.indexes[column_name]:
+            is_indexed = True
             record_ids = set(self.indexes[column_name][column_value])
 
         if column_name in self.unique_indexes and column_value in self.unique_indexes[column_name]:
+            is_indexed = True
             record_id = self.unique_indexes[column_name][column_value]
             record_ids.add(record_id)
+
+        if not is_indexed:
+            for record_id, record in self.records.items():
+                if record[column_name] == column_value:
+                    record_ids.add(record_id)
 
         return [self.records[record_id] for record_id in record_ids]
