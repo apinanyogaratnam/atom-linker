@@ -26,10 +26,13 @@ def main() -> None:
     -------
         None
     """
-    db = Database("test")
+    database_name = "test"
+    table_name = "users"
+
+    db = Database(database_name)
 
     db.create_table(
-        "users",
+        table_name,
         {
             "first_name": str,
             "last_name": str,
@@ -40,7 +43,7 @@ def main() -> None:
         },
     )
 
-    users = db.get_table("users")
+    users = db.get_table(table_name)
 
     record_id = users.insert_record(
         {
@@ -55,6 +58,8 @@ def main() -> None:
 
     record = users.get_record_by_id(record_id)
     logger.debug(record)
+
+    db.drop_table(table_name)
 
 if __name__ == "__main__":
     main()
