@@ -31,7 +31,6 @@ class Table:
         self.columns = columns
         self.count = 0
         self.records = {}
-        # TODO: make indexes list a set
         self.indexes = {}
         self.unique_indexes = {}
         self.foreign_keys = {}

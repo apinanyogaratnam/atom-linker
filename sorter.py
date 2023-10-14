@@ -19,8 +19,39 @@ logger.setLevel(logging.DEBUG)
 
 
 class Sorter:
+    """Class for sorting lists of objects.
+
+    Provides methods for parallel merge sort and merging sorted lists.
+    Designed to take advantage of multiple cores by splitting
+    the data into chunks and sorting in parallel threads.
+
+    Attributes
+    ----------
+    None
+
+    Methods
+    -------
+    merge_sort: Recursively split list and merge sort each half.
+    merge: Merge two already sorted lists into one sorted list.
+    parallel_sorting: Main method to sort a list in parallel.
+    """
+
     @staticmethod
     def merge_sort(arr: list[object], sort_by: str) -> list[object]:
+        """Recursively split list and merge sort each half.
+
+        Splits the input list in half, recursively sorts each half, and merges
+        the sorted halves back together. Base case returns list if length <= 1.
+
+        Args:
+        ----
+        arr (list[object]): List to sort.
+        sort_by (str): Key in each object to sort by.
+
+        Returns:
+        -------
+        list[object]: Sorted version of input list.
+        """
         if len(arr) <= 1:
             return arr
 
@@ -35,6 +66,21 @@ class Sorter:
 
     @staticmethod
     def merge(left: list[object], right: list[object], sort_by: str) -> list[object]:
+        """Merge two sorted lists into one sorted list.
+
+        Iterates through both lists simultaneously, comparing elements at each
+        index. Pushes the smaller element to the result list each iteration.
+
+        Args:
+        ----
+        left (list[object]): First sorted list.
+        right (list[object]): Second sorted list.
+        sort_by (str): Key in each object to compare for sorting.
+
+        Returns:
+        -------
+        list[object]: Combined sorted list.
+        """
         result = []
         left_idx, right_idx = 0, 0
 
@@ -54,10 +100,23 @@ class Sorter:
         return result
 
     def parallel_sorting(self, records: list[object], sort_by: str = "created_at") -> list[object]:
+        """Sort a list using merge sort in parallel.
+
+        Splits the list into chunks and uses thread pool to sort
+        each chunk in parallel. Then merges the sorted chunks.
+
+        Args:
+        ----
+        records (list[object]): List of records to sort.
+        sort_by (str): Key in each record to sort by.
+
+        Returns:
+        -------
+        list[object]: Sorted records.
+
+        """
         logger.debug(f"Records: {records}")  # Debug line
 
-        # Ensure records is a list and non-empty
-        assert isinstance(records, list), f"Expected a list, but got {type(records)}"
         if not records:
             return []
 
