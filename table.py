@@ -106,7 +106,7 @@ class Table:
 
         return record
 
-    def _validate_update_record_by_id(self, record_id: int, record: dict[str, Any]) -> None:
+    def validate_update_record_by_id(self, record_id: int, record: dict[str, Any]) -> None:
         """Validate the arguments for the update_record_by_id method.
 
         Args:
@@ -135,12 +135,12 @@ class Table:
         if not isinstance(record_id, int):
             msg = "Id must be an integer."
             raise TypeError(msg)
-        self._validate_record(record)
+        self.validate_record(record)
         if record_id not in self.records:
             msg = f"Record with id {record_id} does not exist."
             raise ValueError(msg)
 
-    def _validate_record(self, record: dict[str, Any]) -> None:
+    def validate_record(self, record: dict[str, Any]) -> None:
         """Validate the arguments for the insert_record and update_record_by_id methods.
 
         Args:
@@ -196,7 +196,7 @@ class Table:
         -------
         object: The record.
         """
-        self._validate_update_record_by_id(record_id, record)
+        self.validate_update_record_by_id(record_id, record)
 
         old_record = self.records[record_id]
         for column_name, column_value in old_record.items():

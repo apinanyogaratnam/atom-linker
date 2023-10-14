@@ -273,7 +273,7 @@ class Database:
 
         table = self.tables[table_name]
 
-        table._validate_record(record)
+        table.validate_record(record)
 
         for column_name, column_value in record.items():
             if column_name in table.foreign_keys:
@@ -300,7 +300,7 @@ class Database:
 
         table = self.tables[table_name]
 
-        table._validate_update_record_by_id(record_id, record)
+        table.validate_update_record_by_id(record_id, record)
 
         for column_name, column_value in record.items():
             if column_name in table.foreign_keys:
