@@ -31,3 +31,14 @@
 2023-10-14 15:11:18,540 - main.py - DEBUG - fk: {'user_id': 'users'}
 2023-10-14 15:11:18,540 - main.py - DEBUG - indexes: {'title': {'My first post': set()}, 'body': {'This is my first post UPDATED!.': set()}}
 2023-10-14 15:11:18,541 - main.py - DEBUG - unique_indexes: {}
+2023-10-14 15:17:20,435 - main.py - DEBUG - all users_records: [{'first_name': 'John', 'last_name': 'Doe', 'email': 'johndoe@email.com', 'created_at': datetime.datetime(2023, 10, 14, 19, 17, 20, 435270, tzinfo=<UTC>), 'updated_at': datetime.datetime(2023, 10, 14, 19, 17, 20, 435457, tzinfo=<UTC>), 'deleted_at': None}, {'first_name': 'Jane', 'last_name': 'Doe', 'email': 'janedoe@email.com', 'created_at': datetime.datetime(2023, 10, 14, 19, 17, 20, 435465, tzinfo=<UTC>), 'updated_at': datetime.datetime(2023, 10, 14, 19, 17, 20, 435466, tzinfo=<UTC>), 'deleted_at': None}]
+2023-10-14 15:17:20,440 - main.py - DEBUG - sorted_user_records: [{'first_name': 'John', 'last_name': 'Doe', 'email': 'johndoe@email.com', 'created_at': datetime.datetime(2023, 10, 14, 19, 17, 20, 435270, tzinfo=<UTC>), 'updated_at': datetime.datetime(2023, 10, 14, 19, 17, 20, 435457, tzinfo=<UTC>), 'deleted_at': None}, {'first_name': 'Jane', 'last_name': 'Doe', 'email': 'janedoe@email.com', 'created_at': datetime.datetime(2023, 10, 14, 19, 17, 20, 435465, tzinfo=<UTC>), 'updated_at': datetime.datetime(2023, 10, 14, 19, 17, 20, 435466, tzinfo=<UTC>), 'deleted_at': None}]
+2023-10-14 15:17:20,440 - main.py - DEBUG - {'user_id': <class 'int'>, 'title': <class 'str'>, 'body': <class 'str'>, 'created_at': <class 'datetime.datetime'>, 'updated_at': <class 'datetime.datetime'>, 'deleted_at': typing.Optional[datetime.datetime]}
+2023-10-14 15:17:20,440 - main.py - DEBUG - {'user_id': 'users'}
+2023-10-14 15:17:20,441 - main.py - DEBUG - {'user_id': 1, 'title': 'My first post', 'body': 'This is my first post UPDATED!.', 'created_at': datetime.datetime(2023, 10, 14, 19, 17, 20, 440992, tzinfo=<UTC>), 'updated_at': datetime.datetime(2023, 10, 14, 19, 17, 20, 440993, tzinfo=<UTC>), 'deleted_at': None}
+2023-10-14 15:17:20,441 - main.py - DEBUG - fk: {'user_id': 'users'}
+2023-10-14 15:17:20,441 - main.py - DEBUG - indexes: {'title': {'My first post': {1}}, 'body': {'This is my first post UPDATED!.': {1}}}
+2023-10-14 15:17:20,441 - main.py - DEBUG - unique_indexes: {}
+2023-10-14 15:17:20,441 - main.py - DEBUG - fk: {'user_id': 'users'}
+2023-10-14 15:17:20,441 - main.py - DEBUG - indexes: {'title': {'My first post': set()}, 'body': {'This is my first post UPDATED!.': set()}}
+2023-10-14 15:17:20,441 - main.py - DEBUG - unique_indexes: {}
