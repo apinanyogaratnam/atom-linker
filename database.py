@@ -1,4 +1,4 @@
-from typing import Any, Dict, Union
+from typing import Any, Union
 
 from table import Table
 
@@ -43,7 +43,7 @@ class Database:
             raise TypeError(msg)
 
         self.name = name
-        self.tables: Dict[str, Table] = {}
+        self.tables: dict[str, Table] = {}
 
     def is_type_or_union_of_types(self, x: object) -> bool:
         """Check if the given object is a type or a union of types.
@@ -215,7 +215,7 @@ class Database:
         del self.tables[name]
 
     def create_foreign_key(
-        self, table_name: str, column_name: str, foreign_table_name: str
+        self, table_name: str, column_name: str, foreign_table_name: str,
     ) -> None:
         """Create a foreign key on a column.
 
@@ -259,9 +259,10 @@ class Database:
         table.create_foreign_key_column(column_name, foreign_table)
 
     def insert_record_into_table(self, table_name: str, record: dict[str, Any]) -> int:
-        """_summary_
+        """_summary_.
 
         Args:
+        ----
             table_name (str): _description_
             record (dict[str, Any]): _description_
         """
@@ -284,9 +285,10 @@ class Database:
         return table.insert_record(record)
 
     def update_record_by_id_into_table(self, table_name: str, record_id: int, record: dict[str, Any]) -> None:
-        """_summary_
+        """_summary_.
 
         Args:
+        ----
             table_name (str): _description_
             record_id (int): _description_
             record (dict[str, Any]): _description_

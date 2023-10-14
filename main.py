@@ -72,12 +72,14 @@ def main() -> None:
         },
     )
 
-    john_record = users.get_record_by_id(john_record_id)
-    jane_record = users.get_record_by_id(jane_record_id)
+    users.get_record_by_id(john_record_id)
+    users.get_record_by_id(jane_record_id)
 
-    records = users.get_records_by_column("email", "johndoe@email.com")
-    records = users.get_records_by_column("first_name", "John")
-    records = users.get_records_by_column("last_name", "Doe")
+    users.get_records_by_column("email", "johndoe@email.com")
+    users.get_records_by_column("first_name", "John")
+    users.get_records_by_column("last_name", "Doe")
+
+    users.get
 
     second_table_name = "posts"
     db.create_table(
@@ -135,16 +137,16 @@ def main() -> None:
 
     updated_record = posts.get_record_by_id(1)
     logger.debug(updated_record)
-    logger.debug(f'fk: {posts.foreign_keys}')
-    logger.debug(f'indexes: {posts.indexes}')
-    logger.debug(f'unique_indexes: {posts.unique_indexes}')
+    logger.debug(f"fk: {posts.foreign_keys}")
+    logger.debug(f"indexes: {posts.indexes}")
+    logger.debug(f"unique_indexes: {posts.unique_indexes}")
 
     posts.delete_record_by_id(1)
 
     posts = db.get_table(second_table_name)
-    logger.debug(f'fk: {posts.foreign_keys}')
-    logger.debug(f'indexes: {posts.indexes}')
-    logger.debug(f'unique_indexes: {posts.unique_indexes}')
+    logger.debug(f"fk: {posts.foreign_keys}")
+    logger.debug(f"indexes: {posts.indexes}")
+    logger.debug(f"unique_indexes: {posts.unique_indexes}")
 
     db.drop_table(table_name)
 

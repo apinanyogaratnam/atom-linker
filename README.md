@@ -14,3 +14,4 @@
 
 TODO:
 - text search using elasticsearch or sphinx data structures
+- consider using generators
