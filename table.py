@@ -392,3 +392,16 @@ class Table:
             raise ValueError(msg)
 
         self.foreign_keys[column_name] = foreign_table.name
+
+    def get_records(self) -> list[object]:
+        """Get records from the instance.
+
+        Args:
+        ----
+        self: The current object.
+
+        Returns:
+        -------
+        list: A list of records.
+        """
+        return list(self.records.values())

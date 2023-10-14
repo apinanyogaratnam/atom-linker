@@ -5,9 +5,17 @@ from typing import Union
 import pytz
 
 from database import Database
+import os
 
 logging.basicConfig(level=logging.DEBUG)
-logger = logging.getLogger(__name__)
+file_name = os.path.basename(__file__)
+logger = logging.getLogger(file_name)
+# setup logger to write to file
+fh = logging.FileHandler(f"{file_name}.log")
+fh.setLevel(logging.DEBUG)
+logger.addHandler(fh)
+formatter = logging.Formatter("%(asctime)s - %(name)s - %(levelname)s - %(message)s")
+fh.setFormatter(formatter)
 
 
 def main() -> None:
@@ -78,6 +86,11 @@ def main() -> None:
     users.get_records_by_column("email", "johndoe@email.com")
     users.get_records_by_column("first_name", "John")
     users.get_records_by_column("last_name", "Doe")
+
+    users_records = users.get_records()
+    logger.debug(f'all users_records: {users_records}')
+    sorted_user_records = db.sort_records(users_records, "created_at")
+    logger.debug(f'sorted_user_records: {sorted_user_records}')
 
     second_table_name = "posts"
     db.create_table(

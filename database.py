@@ -1,4 +1,5 @@
 from typing import Any, Union
+from sorter import Sorter
 
 from table import Table
 
@@ -310,3 +311,22 @@ class Database:
                     raise ValueError(msg)
 
         table.update_record_by_id(record_id, record)
+
+    def sort_records(self, records: list[dict[str, Any]], sort_by: str) -> list[dict[str, Any]]:
+        """_summary_.
+
+        Args:
+        ----
+            records (list[dict[str, Any]]): _description_
+            sort_by (str): _description_
+
+        Returns:
+        -------
+            list[dict[str, Any]]: _description_
+        """
+        if not records:
+            return records
+
+        sorter = Sorter()
+
+        return sorter.parallel_sorting(records, "created_at")
