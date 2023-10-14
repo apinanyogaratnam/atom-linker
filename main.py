@@ -79,8 +79,6 @@ def main() -> None:
     users.get_records_by_column("first_name", "John")
     users.get_records_by_column("last_name", "Doe")
 
-    users.get
-
     second_table_name = "posts"
     db.create_table(
         second_table_name,
