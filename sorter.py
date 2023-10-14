@@ -1,9 +1,7 @@
-import multiprocessing
-from multiprocessing.pool import ThreadPool
-from typing import List, Any
-import operator
 import logging
+import multiprocessing
 import os
+from multiprocessing.pool import ThreadPool
 
 file_name = os.path.basename(__file__)
 logger = logging.getLogger(file_name)
@@ -22,7 +20,7 @@ logger.setLevel(logging.DEBUG)
 
 class Sorter:
     @staticmethod
-    def merge_sort(arr: List[object], sort_by: str) -> List[object]:
+    def merge_sort(arr: list[object], sort_by: str) -> list[object]:
         if len(arr) <= 1:
             return arr
 
@@ -36,7 +34,7 @@ class Sorter:
         return Sorter.merge(left_half, right_half, sort_by)
 
     @staticmethod
-    def merge(left: List[object], right: List[object], sort_by: str) -> List[object]:
+    def merge(left: list[object], right: list[object], sort_by: str) -> list[object]:
         result = []
         left_idx, right_idx = 0, 0
 
@@ -55,26 +53,26 @@ class Sorter:
         result += right[right_idx:]
         return result
 
-    def parallel_sorting(self, records: List[object], sort_by: str = "created_at") -> List[object]:
+    def parallel_sorting(self, records: list[object], sort_by: str = "created_at") -> list[object]:
         logger.debug(f"Records: {records}")  # Debug line
-        
+
         # Ensure records is a list and non-empty
         assert isinstance(records, list), f"Expected a list, but got {type(records)}"
         if not records:
             return []
-        
+
         cpu_count = multiprocessing.cpu_count()
         avg_len = len(records) // cpu_count
         chunks = [records[i * avg_len: (i + 1) * avg_len] for i in range(cpu_count - 1)]
         chunks.append(records[(cpu_count - 1) * avg_len:])
-        
+
         logger.debug(f"Chunks: {chunks}")  # Debug line
 
         with ThreadPool(cpu_count) as pool:
             sorted_chunks = pool.starmap(self.merge_sort, [(chunk, sort_by) for chunk in chunks])
-        
+
         logger.debug(f"Sorted Chunks: {sorted_chunks}")  # Debug line
-        
+
         while len(sorted_chunks) > 1:
             merged_chunks = []
             for i in range(0, len(sorted_chunks), 2):
@@ -83,7 +81,7 @@ class Sorter:
                     merged_chunks.append(merged)
                 else:
                     merged_chunks.append(sorted_chunks[i])
-            
+
             logger.debug(f"Merging: {sorted_chunks} => {merged_chunks}")  # Debug line
             sorted_chunks = merged_chunks
 

@@ -1,11 +1,11 @@
 import logging
+import os
 from datetime import datetime
 from typing import Union
 
 import pytz
 
 from database import Database
-import os
 
 file_name = os.path.basename(__file__)
 logger = logging.getLogger(file_name)
@@ -92,9 +92,9 @@ def main() -> None:
     users.get_records_by_column("last_name", "Doe")
 
     users_records = users.get_records()
-    logger.debug(f'all users_records: {users_records}')
+    logger.debug(f"all users_records: {users_records}")
     sorted_user_records = db.sort_records(users_records, "created_at")
-    logger.debug(f'sorted_user_records: {sorted_user_records}')
+    logger.debug(f"sorted_user_records: {sorted_user_records}")
 
     second_table_name = "posts"
     db.create_table(

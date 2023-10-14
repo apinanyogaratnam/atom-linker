@@ -1,6 +1,6 @@
 from typing import Any, Union
-from sorter import Sorter
 
+from sorter import Sorter
 from table import Table
 
 
