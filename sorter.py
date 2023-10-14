@@ -5,15 +5,19 @@ import operator
 import logging
 import os
 
-logging.basicConfig(level=logging.DEBUG)
 file_name = os.path.basename(__file__)
 logger = logging.getLogger(file_name)
-# setup logger to write to file
+
+# Setup logger to write to file
 fh = logging.FileHandler(f"{file_name}.log")
 fh.setLevel(logging.DEBUG)
 logger.addHandler(fh)
+
 formatter = logging.Formatter("%(asctime)s - %(name)s - %(levelname)s - %(message)s")
 fh.setFormatter(formatter)
+
+# Ensure logger is set to debug level, so it logs messages of DEBUG and above.
+logger.setLevel(logging.DEBUG)
 
 
 class Sorter:
@@ -64,7 +68,7 @@ class Sorter:
         chunks = [records[i * avg_len: (i + 1) * avg_len] for i in range(cpu_count - 1)]
         chunks.append(records[(cpu_count - 1) * avg_len:])
         
-        print(f"Chunks: {chunks}")  # Debug line
+        logger.debug(f"Chunks: {chunks}")  # Debug line
 
         with ThreadPool(cpu_count) as pool:
             sorted_chunks = pool.starmap(self.merge_sort, [(chunk, sort_by) for chunk in chunks])
