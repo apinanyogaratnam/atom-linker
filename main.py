@@ -45,7 +45,8 @@ def main() -> None:
 
     users = db.get_table(table_name)
 
-    john_record_id = users.insert_record(
+    john_record_id = db.insert_record_into_table(
+        table_name,
         {
             "first_name": "John",
             "last_name": "Doe",
@@ -59,7 +60,8 @@ def main() -> None:
     users.create_unique_index("email")
     users.create_index("first_name")
 
-    jane_record_id = users.insert_record(
+    jane_record_id = db.insert_record_into_table(
+        table_name,
         {
             "first_name": "Jane",
             "last_name": "Doe",
@@ -77,11 +79,65 @@ def main() -> None:
     records = users.get_records_by_column("first_name", "John")
     records = users.get_records_by_column("last_name", "Doe")
 
+    second_table_name = "posts"
+    db.create_table(
+        second_table_name,
+        {
+            "user_id": int,
+            "title": str,
+            "body": str,
+            "created_at": datetime,
+            "updated_at": datetime,
+            "deleted_at": Union[datetime, None],
+        },
+    )
+
+    logger.debug(db.tables[second_table_name].columns)
+
+    db.create_foreign_key(second_table_name, "user_id", table_name)
+
+    db.insert_record_into_table(
+        second_table_name,
+        {
+            "user_id": john_record_id,
+            "title": "My first post",
+            "body": "This is my first post.",
+            "created_at": datetime.now(tz=pytz.UTC),
+            "updated_at": datetime.now(tz=pytz.UTC),
+            "deleted_at": None,
+        },
+    )
+
     # logger.debug(john_record)
     # logger.debug(jane_record)
-    logger.debug(users.indexes)
-    logger.debug(users.unique_indexes)
-    logger.debug(records)
+    # logger.debug(users.indexes)
+    # logger.debug(users.unique_indexes)
+    # logger.debug(records)
+    logger.debug(db.tables[second_table_name].foreign_keys)
+
+    db.update_record_by_id_into_table(
+        second_table_name,
+        1,
+        {
+            "user_id": john_record_id,
+            "title": "My first post",
+            "body": "This is my first post UPDATED!.",
+            "created_at": datetime.now(tz=pytz.UTC),
+            "updated_at": datetime.now(tz=pytz.UTC),
+            "deleted_at": None,
+        },
+    )
+
+    posts = db.get_table(second_table_name)
+
+    posts.create_index("title")
+    posts.create_index("body")
+
+    updated_record = posts.get_record_by_id(1)
+    logger.debug(updated_record)
+    logger.debug(f'fk: {posts.foreign_keys}')
+    logger.debug(f'indexes: {posts.indexes}')
+    logger.debug(f'unique_indexes: {posts.unique_indexes}')
 
     db.drop_table(table_name)
 

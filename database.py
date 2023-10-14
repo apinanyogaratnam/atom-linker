@@ -1,4 +1,4 @@
-from typing import Union
+from typing import Any, Dict, Union
 
 from table import Table
 
@@ -43,7 +43,7 @@ class Database:
             raise TypeError(msg)
 
         self.name = name
-        self.tables = {}
+        self.tables: Dict[str, Table] = {}
 
     def is_type_or_union_of_types(self, x: object) -> bool:
         """Check if the given object is a type or a union of types.
@@ -213,3 +213,98 @@ class Database:
             raise ValueError(msg)
 
         del self.tables[name]
+
+    def create_foreign_key(
+        self, table_name: str, column_name: str, foreign_table_name: str
+    ) -> None:
+        """Create a foreign key on a column.
+
+        Args:
+        ----
+        self: The current object.
+        table_name (str): The name of the table.
+        column_name (str): The name of the column.
+        foreign_table_name (str): The name of the foreign table.
+
+        Raises:
+        ------
+        ValueError: If the table does not exist.
+        ValueError: If the column does not exist.
+        ValueError: If the foreign table does not exist.
+
+        Returns:
+        -------
+        None
+        """
+        if table_name not in self.tables:
+            msg = f"Table {table_name} does not exist."
+            raise ValueError(msg)
+
+        table = self.tables[table_name]
+
+        if column_name not in table.columns:
+            msg = f"Column {column_name} does not exist."
+            raise ValueError(msg)
+
+        if foreign_table_name not in self.tables:
+            msg = f"Foreign table {foreign_table_name} does not exist."
+            raise ValueError(msg)
+
+        foreign_table = self.tables[foreign_table_name]
+
+        if table.columns[column_name] != int:
+            msg = f"Column {column_name} is not an integer."
+            raise ValueError(msg)
+
+        table.create_foreign_key_column(column_name, foreign_table)
+
+    def insert_record_into_table(self, table_name: str, record: dict[str, Any]) -> int:
+        """_summary_
+
+        Args:
+            table_name (str): _description_
+            record (dict[str, Any]): _description_
+        """
+        if table_name not in self.tables:
+            msg = f"Table {table_name} does not exist."
+            raise ValueError(msg)
+
+        table = self.tables[table_name]
+
+        table._validate_record(record)
+
+        for column_name, column_value in record.items():
+            if column_name in table.foreign_keys:
+                foreign_table_name = table.foreign_keys[column_name]
+                foreign_table = self.tables[foreign_table_name]
+                if column_value not in foreign_table.records:
+                    msg = f"Value {column_value} does not exist in foreign table {foreign_table_name}."
+                    raise ValueError(msg)
+
+        return table.insert_record(record)
+
+    def update_record_by_id_into_table(self, table_name: str, record_id: int, record: dict[str, Any]) -> None:
+        """_summary_
+
+        Args:
+            table_name (str): _description_
+            record_id (int): _description_
+            record (dict[str, Any]): _description_
+        """
+        if table_name not in self.tables:
+            msg = f"Table {table_name} does not exist."
+            raise ValueError(msg)
+
+        table = self.tables[table_name]
+
+        table._validate_update_record_by_id(record_id, record)
+
+        for column_name, column_value in record.items():
+            if column_name in table.foreign_keys:
+                foreign_table_name = table.foreign_keys[column_name]
+                foreign_table = self.tables[foreign_table_name]
+                if column_value not in foreign_table.records:
+                    msg = f"Value {column_value} does not exist in foreign table {foreign_table_name}."
+                    raise ValueError(msg)
+
+        table.update_record_by_id(record_id, record)

@@ -31,8 +31,10 @@ class Table:
         self.columns = columns
         self.count = 0
         self.records = {}
+        # TODO: make indexes list a set
         self.indexes = {}
         self.unique_indexes = {}
+        self.foreign_keys = {}
 
     def insert_record(self, record: dict[str, Any]) -> int:
         """Insert a record into the instance.
@@ -53,7 +55,7 @@ class Table:
         -------
         int: The id of the record.
         """
-        self.__validate_record(record)
+        # self.__validate_record(record)
         self.count += 1
         self.records[self.count] = record
 
@@ -105,7 +107,7 @@ class Table:
 
         return record
 
-    def __validate_update_record_by_id(self, record_id: int, record: dict[str, Any]) -> None:
+    def _validate_update_record_by_id(self, record_id: int, record: dict[str, Any]) -> None:
         """Validate the arguments for the update_record_by_id method.
 
         Args:
@@ -134,12 +136,12 @@ class Table:
         if not isinstance(record_id, int):
             msg = "Id must be an integer."
             raise TypeError(msg)
-        self.__validate_record(record)
+        self._validate_record(record)
         if record_id not in self.records:
             msg = f"Record with id {record_id} does not exist."
             raise ValueError(msg)
 
-    def __validate_record(self, record: dict[str, Any]) -> None:
+    def _validate_record(self, record: dict[str, Any]) -> None:
         """Validate the arguments for the insert_record and update_record_by_id methods.
 
         Args:
@@ -195,7 +197,16 @@ class Table:
         -------
         object: The record.
         """
-        self.__validate_update_record_by_id(record_id, record)
+        self._validate_update_record_by_id(record_id, record)
+
+        old_record = self.records[record_id]
+        for column_name, column_value in old_record.items():
+            if column_name in self.indexes:
+                self.indexes[column_name][column_value].remove(record_id)
+
+            if column_name in self.unique_indexes:
+                self.unique_indexes[column_name].pop(column_value)
+
         self.records[record_id] = record
 
         return self.records[record_id]
@@ -248,7 +259,14 @@ class Table:
         None
         """
         self.__validate_delete_record_by_id(record_id)
-        del self.records[record_id]
+        record = self.records.pop(record_id)
+
+        for column_name, column_value in record.items():
+            if column_name in self.indexes:
+                self.indexes[column_name][column_value].remove(record_id)
+
+            if column_name in self.unique_indexes:
+                self.unique_indexes[column_name].pop(column_value)
 
     def create_unique_index(self, column_name: str) -> None:
         """Create a unique index on a column.
@@ -347,3 +365,30 @@ class Table:
                     record_ids.add(record_id)
 
         return [self.records[record_id] for record_id in record_ids]
+
+    def create_foreign_key_column(self, column_name: str, foreign_table: "Table") -> None:
+        """Create a foreign key column.
+
+        Args:
+        ----
+        self: The current object.
+        column_name (str): The name of the column to create a foreign key on.
+        foreign_table (Table): The foreign table.
+
+        Raises:
+        ------
+        ValueError: If the column already exists.
+        ValueError: If the foreign table does not exist.
+
+        Returns:
+        -------
+        None
+        """
+        foreign_table_ids = set(foreign_table.records.keys())
+        table_column_values = {record[column_name] for record in self.records.values()}
+
+        if not table_column_values.issubset(foreign_table_ids):
+            msg = f"Cannot create foreign key on {column_name} because not all values exist in foreign table."
+            raise ValueError(msg)
+
+        self.foreign_keys[column_name] = foreign_table.name
