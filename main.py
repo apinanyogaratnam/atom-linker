@@ -139,6 +139,13 @@ def main() -> None:
     logger.debug(f'indexes: {posts.indexes}')
     logger.debug(f'unique_indexes: {posts.unique_indexes}')
 
+    posts.delete_record_by_id(1)
+
+    posts = db.get_table(second_table_name)
+    logger.debug(f'fk: {posts.foreign_keys}')
+    logger.debug(f'indexes: {posts.indexes}')
+    logger.debug(f'unique_indexes: {posts.unique_indexes}')
+
     db.drop_table(table_name)
 
 if __name__ == "__main__":

@@ -323,9 +323,9 @@ class Table:
         for record_id, record in self.records.items():
             value = record[column_name]
             if value not in self.indexes[column_name]:
-                self.indexes[column_name][value] = []
+                self.indexes[column_name][value] = set()
 
-            self.indexes[column_name][value].append(record_id)
+            self.indexes[column_name][value].add(record_id)
 
     def get_records_by_column(self, column_name: str, column_value: object) -> list[object]:
         """Get records from the instance by column_name and column_value.
