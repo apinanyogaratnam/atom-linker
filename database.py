@@ -1,6 +1,4 @@
 from typing import Any, Union
-
-from sorter import Sorter
 from table import Table
 
 
@@ -312,21 +310,20 @@ class Database:
 
         table.update_record_by_id(record_id, record)
 
-    def sort_records(self, records: list[dict[str, Any]], sort_by: str) -> list[dict[str, Any]]:
-        """_summary_.
+    def sort_records(self, records: list[dict[str, Any]], sort_by: str, reverse: bool = False) -> None:
+        """Sort the given records by the given column.
 
         Args:
         ----
-            records (list[dict[str, Any]]): _description_
-            sort_by (str): _description_
+            records (list[dict[str, Any]]): the records to sort.
+            sort_by (str): the column to sort by.
+            reverse (bool, optional): To sort by descending. Defaults to False.
 
         Returns:
         -------
-            list[dict[str, Any]]: _description_
+            None
         """
         if not records:
             return records
 
-        sorter = Sorter()
-
-        return sorter.parallel_sorting(records, "created_at")
+        records.sort(key=lambda x: x[sort_by], reverse=reverse)
