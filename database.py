@@ -2,6 +2,10 @@ from typing import Any, Union
 
 from table import Table
 
+from log import get_logger
+
+logger = get_logger(__file__)
+
 
 class Database:
     """Represents a database.

@@ -1,21 +1,9 @@
-import logging
 import multiprocessing
-import os
 from multiprocessing.pool import ThreadPool
 
-file_name = os.path.basename(__file__)
-logger = logging.getLogger(file_name)
+from log import get_logger
 
-# Setup logger to write to file
-fh = logging.FileHandler(f"{file_name}.log")
-fh.setLevel(logging.DEBUG)
-logger.addHandler(fh)
-
-formatter = logging.Formatter("%(asctime)s - %(name)s - %(levelname)s - %(message)s")
-fh.setFormatter(formatter)
-
-# Ensure logger is set to debug level, so it logs messages of DEBUG and above.
-logger.setLevel(logging.DEBUG)
+logger = get_logger(__file__)
 
 
 class Sorter:
