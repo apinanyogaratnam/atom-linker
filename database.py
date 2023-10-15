@@ -1,4 +1,5 @@
 from typing import Any, Union
+
 from table import Table
 
 
@@ -327,3 +328,4 @@ class Database:
             return records
 
         records.sort(key=lambda x: x[sort_by], reverse=reverse)
+        return None
