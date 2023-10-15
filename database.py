@@ -262,8 +262,8 @@ class Database:
 
         Args:
         ----
-            table_name (str): _description_
-            record (dict[str, Any]): _description_
+            table_name (str): The name of the table.
+            record (dict[str, Any]): The record to insert.
         """
         if table_name not in self.tables:
             msg = f"Table {table_name} does not exist."
@@ -288,9 +288,9 @@ class Database:
 
         Args:
         ----
-            table_name (str): _description_
-            record_id (int): _description_
-            record (dict[str, Any]): _description_
+            table_name (str): The name of the table.
+            record_id (int): The id of the record to update.
+            record (dict[str, Any]): The record to update.
         """
         if table_name not in self.tables:
             msg = f"Table {table_name} does not exist."
@@ -315,8 +315,8 @@ class Database:
 
         Args:
         ----
-            records (list[dict[str, Any]]): the records to sort.
-            sort_by (str): the column to sort by.
+            records (list[dict[str, Any]]): The records to sort.
+            sort_by (str): The column to sort by.
             reverse (bool, optional): To sort by descending. Defaults to False.
 
         Returns:
