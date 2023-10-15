@@ -60,6 +60,9 @@ def main() -> None:
     users.create_unique_index("email")
     users.create_index("first_name")
 
+    logger.debug(f'users.indexes: {users.indexes}')
+    logger.debug(f'users.unique_indexes: {users.unique_indexes}')
+
     jane_record_id = db.insert_record_into_table(
         table_name,
         {
