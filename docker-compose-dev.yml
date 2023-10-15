@@ -1,0 +1,17 @@
+version: '3.8'
+
+services:
+  web:
+    platform: linux/amd64
+    build: .
+    ports:
+      - "8000:8000"
+    volumes:
+      - .:/app
+      - ./.vscode:/app/.vscode
+    environment:
+      - FLASK_DEBUG=1
+      - FLASK_RUN_HOST=0.0.0.0
+    command: tail -f /dev/null
+    env_file:
+      - .env

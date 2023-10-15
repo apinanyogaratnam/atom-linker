@@ -1,0 +1,22 @@
+{
+    "name": "Atom Linker",
+    "dockerComposeFile": "../docker-compose-dev.yml",
+    "service": "web",
+    "workspaceFolder": "/app",
+    "customizations": {
+        "vscode": {
+            "extensions": [
+                "ms-python.python",
+                "GitHub.copilot",
+                "GitHub.copilot-chat",
+                "mutantdino.resourcemonitor",
+                "streetsidesoftware.code-spell-checker",
+                "eamodio.gitlens",
+                // "sourcery.sourcery",
+                "GitHub.copilot-labs"
+            ]
+        }
+    },
+    "postCreateCommand": "apk update && apk add make && apk add git",
+    "shutdownAction": "stopCompose"
+}

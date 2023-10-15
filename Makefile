@@ -1,5 +1,8 @@
 format:
 	ruff --fix .
 
+test:
+	python3 test.py
+
 start:
-	python3 main.py
+	python main.py
