@@ -17,3 +17,7 @@ TODO:
 - consider using generators
 - for indexes, add it sorted? might need to define a separate index attribute for sorted indexing
 - create record type
+
+
+# delete all sorter.py.log files in git history
+git filter-branch --force --index-filter 'git rm --cached --ignore-unmatch sorter.py.log' --prune-empty --tag-name-filter cat -- --all

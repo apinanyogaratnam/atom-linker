@@ -84,7 +84,7 @@ def main() -> None:
 
     users_records = users.get_records()
     logger.debug(f"all users_records: {users_records}")
-    db.sort_records(users_records, "created_at")
+    db.sort_records(users_records, "created_at", reverse=True)
     logger.debug(f"sorted_user_records: {users_records}")
 
     second_table_name = "posts"
