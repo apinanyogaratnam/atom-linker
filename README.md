@@ -23,6 +23,7 @@ TODO:
 - consider using generators
 - for indexes, add it sorted? might need to define a separate index attribute for sorted indexing
 - can trees be used in this db?
+- add types for all parameters where necessary / using already defined types
 
 NOTES:
 - unique indexes are when you want to make sure that the value is unique and indexed (possibly just make it unique without indexes? would be a set of items and make sure the item is not in the set. this way there will only be one index check for the CRUD stuff)

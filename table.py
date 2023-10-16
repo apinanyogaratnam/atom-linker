@@ -1,6 +1,6 @@
 from typing import Any, Dict, Set
 from stop_words import STOP_WORDS
-from internal_types import Record, RowId, ColumnName, Word
+from internal_types import Columns, Record, RowId, ColumnName, Word
 
 
 class Table:
@@ -16,7 +16,7 @@ class Table:
         None
     """
 
-    def __init__(self, name: str, columns: dict) -> None:
+    def __init__(self, name: str, columns: Columns) -> None:
         """Initialize a new instance of the class.
 
         Args:
@@ -29,8 +29,8 @@ class Table:
         -------
         None
         """
-        self.name = name
-        self.columns = columns
+        self.name: str = name
+        self.columns: Dict[name, ] = columns
         self.count = 0
         self.records = {}
 

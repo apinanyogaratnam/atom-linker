@@ -1,4 +1,5 @@
 from typing import Any, Union
+from internal_types import Columns
 
 from log import get_logger
 from table import Table
@@ -144,7 +145,7 @@ class Database:
 
         self.__validate_create_table_columns(columns)
 
-    def create_table(self, name: str, columns: dict) -> None:
+    def create_table(self, name: str, columns: Columns) -> None:
         """Create a new table in the database.
 
         Args:
