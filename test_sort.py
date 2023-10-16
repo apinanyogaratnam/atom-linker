@@ -1,9 +1,8 @@
 from datetime import datetime, timezone
 from time import perf_counter
 
-from sorter import Sorter
-
 from log import get_logger
+from sorter import Sorter
 
 logger = get_logger(__file__)
 

@@ -1,5 +1,6 @@
 import socket
 
+
 def handle_client(client_socket):
     request = client_socket.recv(1024)
     print(f"Received: {request.decode('utf-8')}")

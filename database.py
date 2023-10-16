@@ -1,8 +1,7 @@
 from typing import Any, Union
 
-from table import Table
-
 from log import get_logger
+from table import Table
 
 logger = get_logger(__file__)
 
