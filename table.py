@@ -1,4 +1,6 @@
-from typing import Any
+from typing import Any, Dict, Set
+from stop_words import STOP_WORDS
+from internal_types import Record, RowId, ColumnName, Word
 
 
 class Table:
@@ -31,8 +33,11 @@ class Table:
         self.columns = columns
         self.count = 0
         self.records = {}
+
         self.indexes = {}
         self.unique_indexes = {}
+        self.inverted_indexes: Dict[ColumnName, Dict[Word, Set[RowId]]] = {} # text search
+
         self.foreign_keys = {}
 
     def insert_record(self, record: dict[str, Any]) -> int:
