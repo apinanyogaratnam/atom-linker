@@ -3,7 +3,6 @@ class Get:
 
     def __init__(self) -> None:
         """Initialize a new instance of Get."""
-        pass
 
     def get_records(self) -> list[object]:
         """Get records from the instance.

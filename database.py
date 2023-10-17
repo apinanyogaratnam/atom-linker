@@ -1,6 +1,6 @@
 from typing import Any, Union
-from internal_types import Columns
 
+from internal_types import Columns
 from log import get_logger
 from table import Table
 

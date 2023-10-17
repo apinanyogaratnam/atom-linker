@@ -1,7 +1,7 @@
-from typing import Any, Dict, Set
+from typing import Any
+
 from get import Get
-from stop_words import STOP_WORDS
-from internal_types import Columns, Record, RowId, ColumnName, Word
+from internal_types import ColumnName, Columns, RowId, Word
 
 
 class Table(Get):
@@ -31,13 +31,13 @@ class Table(Get):
         None
         """
         self.name: str = name
-        self.columns: Dict[name, ] = columns
+        self.columns: dict[name, ] = columns
         self.count = 0
         self.records = {}
 
         self.indexes = {}
         self.unique_indexes = {}
-        self.inverted_indexes: Dict[ColumnName, Dict[Word, Set[RowId]]] = {} # text search
+        self.inverted_indexes: dict[ColumnName, dict[Word, set[RowId]]] = {} # text search
 
         self.foreign_keys = {}
 

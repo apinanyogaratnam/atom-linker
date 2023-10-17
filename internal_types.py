@@ -1,4 +1,4 @@
-from typing import Any, Dict
+from typing import Any
 
 # Record is a table row
 Record = dict[str, Any]
@@ -13,4 +13,4 @@ ColumnName = str
 Word = str
 
 # Column
-Columns = Dict[ColumnName, type]
+Columns = dict[ColumnName, type]
