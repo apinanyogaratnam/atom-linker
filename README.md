@@ -35,6 +35,7 @@ TODO:
 - use default dictionaries
 - use built in python functions/methods for optimal performance
 - ask chatgpt for cleanup and optimization tips
+- add threading and locks
 
 NOTES:
 

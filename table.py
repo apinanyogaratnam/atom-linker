@@ -1,7 +1,8 @@
+from collections import defaultdict
 from typing import Any
 
 from get_records import GetRecords
-from internal_types import ColumnName, Columns, RowId, Word
+from internal_types import ColumnName, Columns, Index, InvertedIndex, RowId, Word
 from stop_words import STOP_WORDS
 
 
@@ -36,9 +37,9 @@ class Table(GetRecords):
         self.count = 0
         self.records = {}
 
-        self.indexes = {}
+        self.indexes: Index = defaultdict(lambda: defaultdict(set)) # TODO: @apinanyogaratnam: need to remove all if conditions that checks wether the item exists or not to create a new set
         self.unique_indexes = {}
-        self.inverted_indexes: dict[ColumnName, dict[Word, set[RowId]]] = {} # text search
+        self.inverted_indexes: InvertedIndex = {} # text search
 
         self.foreign_keys = {}
 
