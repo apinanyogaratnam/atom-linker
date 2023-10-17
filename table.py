@@ -1,6 +1,6 @@
 from typing import Any
 
-from get import GetRecords
+from get_records import GetRecords
 from internal_types import ColumnName, Columns, RowId, Word
 from stop_words import STOP_WORDS
 
