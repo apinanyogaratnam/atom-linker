@@ -21,12 +21,15 @@
 - need to be able to do full matches as well
 
 TODO:
+
 - text search using elasticsearch or sphinx data structures
 - consider using generators
 - for indexes, add it sorted? might need to define a separate index attribute for sorted indexing
 - can trees be used in this db?
 - add types for all parameters where necessary / using already defined types
 - fuzzy search: https://chat.openai.com/c/e89038e7-4cf9-4639-9573-9c57ea9c96c3
+- separate out GET/POST/UPDATE/DELETE/INDEXES methods into its own class for each table (crud classes inherit from indexes, table inherit from crud classes)
+- for indexes class, make utility methods instead of manually looking through the index attributes
 
 NOTES:
 
