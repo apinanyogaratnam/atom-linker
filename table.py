@@ -2,6 +2,7 @@ from typing import Any
 
 from get import GetRecords
 from internal_types import ColumnName, Columns, RowId, Word
+from stop_words import STOP_WORDS
 
 
 class Table(GetRecords):
@@ -79,7 +80,7 @@ class Table(GetRecords):
                 self.unique_indexes[column_name][column_value] = self.count
 
             if column_name in self.inverted_indexes:
-                for word in set(column_value.split()):
+                for word in set(column_value.split()).difference(STOP_WORDS):
                     if word not in self.inverted_indexes[column_name]:
                         self.inverted_indexes[column_name][word] = set()
 
@@ -366,7 +367,7 @@ class Table(GetRecords):
         self.inverted_indexes[column_name] = {}
 
         for record_id, record in self.records.items():
-            for word in set(record[column_name].split()):
+            for word in set(record[column_name].split()).difference(STOP_WORDS):
                 if word not in self.inverted_indexes[column_name]:
                     self.inverted_indexes[column_name][word] = set()
 
