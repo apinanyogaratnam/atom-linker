@@ -18,7 +18,7 @@ def get_logger(file: str, level: int = logging.DEBUG) -> logging.Logger:
     logger = logging.getLogger(file_name)
 
     # Setup logger to write to file
-    fh = logging.FileHandler(f"{file_name}.log")
+    fh = logging.FileHandler(f"logs/{file_name}.log")
     fh.setLevel(logging.DEBUG)
     logger.addHandler(fh)
 

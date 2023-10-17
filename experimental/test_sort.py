@@ -2,7 +2,7 @@ from datetime import datetime, timezone
 from time import perf_counter
 
 from log import get_logger
-from sorter import Sorter
+from experimental.sorter import Sorter
 
 logger = get_logger(__file__)
 
