@@ -1,7 +1,7 @@
 from typing import Any
 
 # Record is a table row
-Record = dict[str, Any]
+Record = dict[str, Any] # Dict[str, Union[str, int, float, bool, None]]
 
 # RowId is a unique identifier for a row
 RowId = int

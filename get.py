@@ -1,3 +1,7 @@
+from typing import List
+from internal_types import ColumnName, Record
+
+
 class Get:
     """Represents a read operation."""
 
@@ -88,3 +92,43 @@ class Get:
 
         return record
 
+    def get_records_by_broad_search(self, column_name: ColumnName, search_text: str) -> List[Record]:
+        """Get records from the instance by column_name and search_text.
+
+        Args:
+        ----
+        self: The current object.
+        column_name (ColumnName): The name of the column to get records by.
+        search_text (str): The text to search for.
+
+        Raises:
+        ------
+        ValueError: If the column does not exist.
+
+        Returns:
+        -------
+        list: A list of records.
+        """
+        if column_name not in self.columns:
+            msg = f"Column {column_name} does not exist."
+            raise ValueError(msg)
+
+        if not isinstance(self.columns[column_name], str):
+            msg = f"Column {column_name} is not a string."
+            raise ValueError(msg)
+
+        record_ids = set()
+        for word in search_text.split():
+            if column_name in self.inverted_indexes and word in self.inverted_indexes[column_name]:
+                # inverted index search
+                _record_ids = self.inverted_indexes[column_name][word]
+                record_ids.update(_record_ids)
+            else:
+                # manual search
+                for record_id, record in self.records.items():
+                    full_column_text = record[column_name]
+                    full_column_text_words = full_column_text.split()
+                    if word in full_column_text_words:
+                        record_ids.add(record_id)
+
+        return [self.records[record_id] for record_id in record_ids]

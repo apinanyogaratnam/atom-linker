@@ -31,7 +31,7 @@ class Table(Get):
         None
         """
         self.name: str = name
-        self.columns: dict[name, ] = columns
+        self.columns: Columns = columns
         self.count = 0
         self.records = {}
 
