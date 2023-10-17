@@ -31,6 +31,8 @@ TODO:
 - separate out GET/POST/UPDATE/DELETE/INDEXES methods into its own class for each table (crud classes inherit from indexes, table inherit from crud classes)
 - for indexes class, make utility methods instead of manually looking through the index attributes
 - update ruff settings to stop converting Dict -> dict and fix all cases where dict should be Dict
+- use default dictionaries
+- use built in python functions/methods for optimal performance
 
 NOTES:
 

@@ -2,7 +2,7 @@ from typing import List
 from internal_types import ColumnName, Record
 
 
-class Get:
+class GetRecords:
     """Represents a read operation."""
 
     def __init__(self) -> None:
@@ -113,7 +113,7 @@ class Get:
             msg = f"Column {column_name} does not exist."
             raise ValueError(msg)
 
-        if not isinstance(self.columns[column_name], str):
+        if self.columns[column_name] != str:
             msg = f"Column {column_name} is not a string."
             raise ValueError(msg)
 

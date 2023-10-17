@@ -1,10 +1,10 @@
 from typing import Any
 
-from get import Get
+from get import GetRecords
 from internal_types import ColumnName, Columns, RowId, Word
 
 
-class Table(Get):
+class Table(GetRecords):
     """Represents a table.
 
     Args:
@@ -77,6 +77,13 @@ class Table(Get):
                     raise ValueError(msg)
 
                 self.unique_indexes[column_name][column_value] = self.count
+
+            if column_name in self.inverted_indexes:
+                for word in set(column_value.split()):
+                    if word not in self.inverted_indexes[column_name]:
+                        self.inverted_indexes[column_name][word] = set()
+
+                    self.inverted_indexes[column_name][word].add(self.count)
 
         return self.count
 
@@ -326,3 +333,41 @@ class Table(Get):
             raise ValueError(msg)
 
         self.foreign_keys[column_name] = foreign_table.name
+
+    def create_inverted_index(self, column_name: str) -> None:
+        """Create an inverted index on a column.
+
+        Args:
+        ----
+        self: The current object.
+        column_name (str): The name of the column to create an inverted index on.
+
+        Raises:
+        ------
+        ValueError: If the column does not exist.
+
+        Returns:
+        -------
+        None
+        """
+        if column_name not in self.columns:
+            msg = f"Column {column_name} does not exist."
+            raise ValueError(msg)
+
+        if column_name in self.inverted_indexes:
+            msg = f"Inverted index for column {column_name} already exists."
+            raise ValueError(msg)
+
+        if self.columns[column_name] != str:
+            msg = f"Cannot create inverted index for column {column_name} because it is not a string."
+            raise ValueError(msg)
+
+        # TODO: might need this to be run on a separate thread since it could take a while
+        self.inverted_indexes[column_name] = {}
+
+        for record_id, record in self.records.items():
+            for word in set(record[column_name].split()):
+                if word not in self.inverted_indexes[column_name]:
+                    self.inverted_indexes[column_name][word] = set()
+
+                self.inverted_indexes[column_name][word].add(record_id)
