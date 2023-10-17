@@ -7,7 +7,8 @@ def get_logger(file: str, level: int = logging.DEBUG) -> logging.Logger:
 
     Args:
     ----
-        file_name (str): The name of the file that the logger will write to.
+        file (str): The file name to create the logger for.
+        level (int): The logging level to set the logger to.
 
     Returns:
     -------
