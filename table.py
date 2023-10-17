@@ -363,7 +363,7 @@ class Table(GetRecords):
             msg = f"Cannot create inverted index for column {column_name} because it is not a string."
             raise ValueError(msg)
 
-        # TODO: might need this to be run on a separate thread since it could take a while
+        # TODO: @apinanyogaratnam: might need this to be run on a separate thread since it could take a while
         self.inverted_indexes[column_name] = {}
 
         for record_id, record in self.records.items():

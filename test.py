@@ -36,8 +36,8 @@ def main() -> None:  # sourcery skip: extract-duplicate-method
             "first_name": str,
             "last_name": str,
             "email": str,
-            "created_at": datetime, # TODO: need to make a new datetime when this is not provided
-            "updated_at": datetime, # TODO: need to update this field when a record is updated
+            "created_at": datetime, # TODO: @apinanyogaratnam: need to make a new datetime when this is not provided
+            "updated_at": datetime, # TODO: @apinanyogaratnam: need to update this field when a record is updated
             "deleted_at": Union[datetime, None], # NOTE: nullable field
         },
     )
@@ -155,7 +155,7 @@ def main() -> None:  # sourcery skip: extract-duplicate-method
 
     db.drop_table(table_name)
 
-    # TODO: test inverted index broad search
+    # TODO: @apinanyogaratnam: test inverted index broad search
 
 if __name__ == "__main__":
     main()

@@ -53,6 +53,8 @@ ignore = [
     "E712", # Comparison to True should be 'if cond is True:' or 'if cond:'
     "E711", # Comparison to None should be 'if cond is None:' or 'if cond is not None:'
     "UP007", # Use `X | Y` for type annotations
+    "TD002", # Missing author in TODO; try: `# TODO(<author_name>): ...` or `# TODO @<author_name>: ...`
+    "TD003", # Missing issue link on the line following this TODO
 ]
 exclude = [
     ".git",
