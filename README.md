@@ -19,6 +19,7 @@
 - need to use sets for list of row ids
 - need to look at elasticsearch and sphinx infrastructure for ideas: https://www.youtube.com/watch?v=fcIzAg63WyI&t=38s
 - need to be able to do full matches as well
+- search types: https://chat.openai.com/c/f0ec05f9-0d97-4774-8699-3a3548a4c398
 
 TODO:
 
@@ -33,6 +34,7 @@ TODO:
 - update ruff settings to stop converting Dict -> dict and fix all cases where dict should be Dict
 - use default dictionaries
 - use built in python functions/methods for optimal performance
+- ask chatgpt for cleanup and optimization tips
 
 NOTES:
 
