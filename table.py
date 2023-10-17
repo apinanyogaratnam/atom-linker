@@ -2,7 +2,7 @@ from collections import defaultdict
 from typing import Any
 
 from get_records import GetRecords
-from internal_types import ColumnName, Columns, Index, InvertedIndex, RowId, Word
+from internal_types import Columns, Index, InvertedIndex
 from stop_words import STOP_WORDS
 
 
