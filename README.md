@@ -17,7 +17,7 @@
 - text search is only for string columns, must make sure to raise errors if the column user is trying to add index for is not a string
 - using inverted indexes for fast searches
 - need to use sets for list of row ids
-- need to look at elasticsearch and sphinx infrastructure for ideas
+- need to look at elasticsearch and sphinx infrastructure for ideas: https://www.youtube.com/watch?v=fcIzAg63WyI&t=38s
 - need to be able to do full matches as well
 
 TODO:
