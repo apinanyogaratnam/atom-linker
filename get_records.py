@@ -1,4 +1,4 @@
-from typing import List
+
 from internal_types import ColumnName, Record
 from stop_words import STOP_WORDS
 
@@ -93,7 +93,7 @@ class GetRecords:
 
         return record
 
-    def get_records_by_broad_search(self, column_name: ColumnName, search_text: str) -> List[Record]:
+    def get_records_by_broad_search(self, column_name: ColumnName, search_text: str) -> list[Record]:
         """Get records from the instance by column_name and search_text.
 
         Args:
