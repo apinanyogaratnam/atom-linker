@@ -376,6 +376,6 @@ class Table(GetRecords):
             msg = f"Cannot create inverted index for column {column_name} because it is not a string."
             raise ValueError(msg)
 
-        # TODO: @apinanyogaratnam: need to create a thread pool OR make this multiprocessing for greater efficiency
+        # TODO: @apinanyogaratnam: make this multiprocessing for greater performance
         thread = Thread(target=self._create_inverted_index_thread, args=(column_name,))
         thread.start()

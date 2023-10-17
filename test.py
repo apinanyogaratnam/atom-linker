@@ -156,6 +156,7 @@ def main() -> None:  # sourcery skip: extract-duplicate-method
     db.drop_table(table_name)
 
     # TODO: @apinanyogaratnam: test inverted index broad search
+    # TODO: @apinanyogaratnam: test out the threading of create inverted index and get records by broad search method
 
 if __name__ == "__main__":
     main()
