@@ -57,11 +57,6 @@ ignore = [
 exclude = [
     ".git",
     "__pycache__",
-
-    # TODO: remove these items below (tmp):
-    "test.py",
-    "udp.py",
-    "tcp.py",
-    "async_tcp.py",
+    "experimental",
 ]
 target-version = "py310"
