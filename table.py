@@ -1,4 +1,5 @@
 from collections import defaultdict
+from threading import Thread, Lock
 from typing import Any
 
 from get_records import GetRecords
@@ -40,6 +41,8 @@ class Table(GetRecords):
         self.indexes: Index = defaultdict(lambda: defaultdict(set)) # TODO: @apinanyogaratnam: need to remove all if conditions that checks wether the item exists or not to create a new set
         self.unique_indexes = {}
         self.inverted_indexes: InvertedIndex = {} # text search
+
+        self.inverted_index_lock = Lock()
 
         self.foreign_keys = {}
 
@@ -336,6 +339,15 @@ class Table(GetRecords):
 
         self.foreign_keys[column_name] = foreign_table.name
 
+    def _create_inverted_index_thread(self, column_name: str) -> None:
+        local_index = defaultdict(set)
+        for record_id, record in self.records.items():
+            for word in set(record[column_name].split()).difference(STOP_WORDS):
+                local_index[word].add(record_id)
+
+        with self.inverted_index_lock:
+            self.inverted_indexes[column_name] = local_index
+
     def create_inverted_index(self, column_name: str) -> None:
         """Create an inverted index on a column.
 
@@ -364,12 +376,6 @@ class Table(GetRecords):
             msg = f"Cannot create inverted index for column {column_name} because it is not a string."
             raise ValueError(msg)
 
-        # TODO: @apinanyogaratnam: might need this to be run on a separate thread since it could take a while
-        self.inverted_indexes[column_name] = {}
-
-        for record_id, record in self.records.items():
-            for word in set(record[column_name].split()).difference(STOP_WORDS):
-                if word not in self.inverted_indexes[column_name]:
-                    self.inverted_indexes[column_name][word] = set()
-
-                self.inverted_indexes[column_name][word].add(record_id)
+        # TODO: @apinanyogaratnam: need to create a thread pool OR make this multiprocessing for greater efficiency
+        thread = Thread(target=self._create_inverted_index_thread, args=(column_name,))
+        thread.start()

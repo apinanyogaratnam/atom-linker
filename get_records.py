@@ -120,9 +120,13 @@ class GetRecords:
 
         record_ids = set()
         for word in set(search_text.split()).difference(STOP_WORDS):
-            if column_name in self.inverted_indexes and word in self.inverted_indexes[column_name]:
-                # inverted index search
-                _record_ids = self.inverted_indexes[column_name][word]
+            with self.inverted_index_lock:  # Lock when accessing the inverted index
+                in_inverted_index = column_name in self.inverted_indexes and word in self.inverted_indexes[column_name]
+                if in_inverted_index:
+                    _record_ids = self.inverted_indexes[column_name][word]
+
+            # Continue using the acquired _record_ids, if available, outside of the lock
+            if in_inverted_index:
                 record_ids.update(_record_ids)
             else:
                 # manual search
