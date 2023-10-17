@@ -1,5 +1,6 @@
 from typing import List
 from internal_types import ColumnName, Record
+from stop_words import STOP_WORDS
 
 
 class GetRecords:
@@ -118,7 +119,7 @@ class GetRecords:
             raise ValueError(msg)
 
         record_ids = set()
-        for word in search_text.split():
+        for word in set(search_text.split()).difference(STOP_WORDS):
             if column_name in self.inverted_indexes and word in self.inverted_indexes[column_name]:
                 # inverted index search
                 _record_ids = self.inverted_indexes[column_name][word]
