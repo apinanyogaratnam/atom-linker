@@ -9,7 +9,7 @@ from log import get_logger
 logger = get_logger(__file__)
 
 
-def main() -> None:
+def main() -> None:  # sourcery skip: extract-duplicate-method
     """Execute the main function.
 
     Creates a database instance with the name "test".
@@ -36,8 +36,8 @@ def main() -> None:
             "first_name": str,
             "last_name": str,
             "email": str,
-            "created_at": datetime,
-            "updated_at": datetime,
+            "created_at": datetime, # TODO: need to make a new datetime when this is not provided
+            "updated_at": datetime, # TODO: need to update this field when a record is updated
             "deleted_at": Union[datetime, None], # NOTE: nullable field
         },
     )
