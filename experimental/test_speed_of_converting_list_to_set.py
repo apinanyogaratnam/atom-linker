@@ -50,3 +50,5 @@ print(f"Time for sanitize_words_list: {time_list_large} seconds")
 # ➜  atom-linker git:(main) ✗ python3 experimental/test_speed_of_converting_list_to_set.py
 # Time for sanitize_words_set: 21.738504209002713 seconds
 # Time for sanitize_words_list: 26.798322291004297 seconds
+
+# NOTE: in conclusion, no point of converting list to set and then iterating over it, just iterate over the list
