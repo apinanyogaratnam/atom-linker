@@ -3,11 +3,17 @@ from threading import Thread, Lock
 from typing import Any
 
 from get_records import GetRecords
+from indexes import Indexes
 from internal_types import Columns, Index, InvertedIndex
 from stop_words import STOP_WORDS
 
+from log import get_logger
 
-class Table(GetRecords):
+logger = get_logger(__file__)
+
+
+# NOTE: might not need to inherit from Indexes since we are already inheriting from GetRecords
+class Table(GetRecords, Indexes):
     """Represents a table.
 
     Args:
@@ -342,7 +348,7 @@ class Table(GetRecords):
     def _create_inverted_index_thread(self, column_name: str) -> None:
         local_index = defaultdict(set)
         for record_id, record in self.records.items():
-            for word in set(record[column_name].split()).difference(STOP_WORDS):
+            for word in self.get_sanitized_words(record[column_name]):
                 local_index[word].add(record_id)
 
         with self.inverted_index_lock:

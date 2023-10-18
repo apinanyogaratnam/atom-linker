@@ -38,6 +38,7 @@ TODO:
 - ask chatgpt for cleanup and optimization tips
 - add threading and locks
 - if a key is being used by a foreign key, then it cannot be deleted
+- think if diacritics should be removed or not when doing sanitized search
 
 NOTES:
 

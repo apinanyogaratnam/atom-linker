@@ -1,9 +1,10 @@
 
+from indexes import Indexes
 from internal_types import ColumnName, Record
 from stop_words import STOP_WORDS
 
 
-class GetRecords:
+class GetRecords(Indexes):
     """Represents a read operation."""
 
     def __init__(self) -> None:
@@ -119,7 +120,7 @@ class GetRecords:
             raise ValueError(msg)
 
         record_ids = set()
-        for word in set(search_text.split()).difference(STOP_WORDS):
+        for word in self.get_sanitized_words(search_text):
             with self.inverted_index_lock:  # Lock when accessing the inverted index
                 in_inverted_index = column_name in self.inverted_indexes and word in self.inverted_indexes[column_name]
                 if in_inverted_index:

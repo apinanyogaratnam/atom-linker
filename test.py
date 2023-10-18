@@ -1,5 +1,6 @@
 from datetime import datetime
 from typing import Union
+import time
 
 import pytz
 
@@ -298,6 +299,10 @@ def test_inverted_index():
     posts = db.get_table("posts")
 
     posts.create_inverted_index("body")
+
+    logger.debug(f"inverted_indexes: {posts.inverted_indexes}")
+
+    time.sleep(5)
 
     logger.debug(f"inverted_indexes: {posts.inverted_indexes}")
 
