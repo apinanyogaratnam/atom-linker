@@ -49,6 +49,7 @@ class Table(GetRecords, Indexes):
         self.unique_indexes = {}
         self.inverted_indexes: InvertedIndex = {} # text search
 
+        self.index_lock = Lock()
         self.inverted_index_lock = Lock()
 
         self.foreign_keys = {}
@@ -290,6 +291,14 @@ class Table(GetRecords, Indexes):
 
             self.unique_indexes[column_name][value] = record_id
 
+    def _create_index_thread(self, column_name: str) -> None:
+        local_index = defaultdict(set)
+        for record_id, record in self.records.items():
+            local_index[record[column_name]].add(record_id)
+
+        with self.index_lock:
+            self.indexes[column_name] = local_index
+
     def create_index(self, column_name: str) -> None:
         """Create an index on a column.
 
@@ -310,14 +319,13 @@ class Table(GetRecords, Indexes):
             msg = f"Column {column_name} does not exist."
             raise ValueError(msg)
 
-        self.indexes[column_name] = {}
+        if column_name in self.indexes:
+            msg = f"Index for column {column_name} already exists."
+            raise ValueError(msg)
 
-        for record_id, record in self.records.items():
-            value = record[column_name]
-            if value not in self.indexes[column_name]:
-                self.indexes[column_name][value] = set()
-
-            self.indexes[column_name][value].add(record_id)
+        # TODO: @apinanyogaratnam: make this multiprocessing for greater performance
+        thread = Thread(target=self._create_index_thread, args=(column_name,))
+        thread.start()
 
     def create_foreign_key_column(self, column_name: str, foreign_table: "Table") -> None:
         """Create a foreign key column.
