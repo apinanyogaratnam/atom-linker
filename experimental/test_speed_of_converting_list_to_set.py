@@ -41,3 +41,12 @@ time_list_large = timeit.timeit(lambda: sanitize_words_list(words_list, stop_wor
 
 print(f"Time for sanitize_words_set: {time_set_large} seconds")
 print(f"Time for sanitize_words_list: {time_list_large} seconds")
+
+
+# ➜  atom-linker git:(main) ✗ python3 experimental/test_speed_of_converting_list_to_set.py 
+# Time for sanitize_words_set: 1.663094125004136 seconds
+# Time for sanitize_words_list: 1.5980288749997271 seconds
+
+# ➜  atom-linker git:(main) ✗ python3 experimental/test_speed_of_converting_list_to_set.py
+# Time for sanitize_words_set: 21.738504209002713 seconds
+# Time for sanitize_words_list: 26.798322291004297 seconds
