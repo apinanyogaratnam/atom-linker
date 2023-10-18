@@ -22,7 +22,8 @@
 - search types: https://chat.openai.com/c/f0ec05f9-0d97-4774-8699-3a3548a4c398
 
 TODO:
-
+- return the row id as well when returning a list of records
+- need to lowercase all strings before inverted indexing + removing punctuation and diacritics
 - text search using elasticsearch or sphinx data structures
 - consider using generators
 - for indexes, add it sorted? might need to define a separate index attribute for sorted indexing
@@ -36,6 +37,7 @@ TODO:
 - use built in python functions/methods for optimal performance
 - ask chatgpt for cleanup and optimization tips
 - add threading and locks
+- if a key is being used by a foreign key, then it cannot be deleted
 
 NOTES:
 

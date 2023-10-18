@@ -158,5 +158,149 @@ def main() -> None:  # sourcery skip: extract-duplicate-method
     # TODO: @apinanyogaratnam: test inverted index broad search
     # TODO: @apinanyogaratnam: test out the threading of create inverted index and get records by broad search method
 
+    posts.create_inverted_index("body")
+    logger.debug(f"indexes: {posts.inverted_indexes}")
+
+
+def __create_database() -> Database:
+    """Create a database instance with the name "test".
+
+    Args:
+    ----
+        None
+
+    Returns:
+    -------
+        Database: The database instance.
+    """
+    database_name = "test"
+
+    db = Database(database_name)
+
+    logger.debug(db)
+
+    return db
+
+
+def __create_users_table(db: Database) -> None:
+    """Create a table named "users" with columns for first name, last name, email, created at, updated at, and deleted at.
+
+    Args:
+    ----
+        db (Database): The database instance.
+
+    Returns:
+    -------
+        None
+    """
+    table_name = "users"
+
+    db.create_table(
+        table_name,
+        {
+            "first_name": str,
+            "last_name": str,
+            "email": str,
+            "created_at": datetime,
+            "updated_at": datetime,
+            "deleted_at": Union[datetime, None],
+        },
+    )
+
+    john_record_id = db.insert_record_into_table(
+        table_name,
+        {
+            "first_name": "John",
+            "last_name": "Doe",
+            "email": "@gmail.com",
+            "created_at": datetime.now(tz=pytz.UTC),
+            "updated_at": datetime.now(tz=pytz.UTC),
+            "deleted_at": None,
+        },
+    )
+
+    jane_record_id = db.insert_record_into_table(
+        table_name,
+        {
+            "first_name": "Jane",
+            "last_name": "Doe",
+            "email": "@gmail.com",
+            "created_at": datetime.now(tz=pytz.UTC),
+            "updated_at": datetime.now(tz=pytz.UTC),
+            "deleted_at": None,
+        },
+    )
+
+
+def __create_posts_table(db: Database) -> None:
+    """Create a table named "posts" with columns for user id, title, body, created at, updated at, and deleted at.
+
+    Args:
+    ----
+        db (Database): The database instance.
+
+    Returns:
+    -------
+        None
+    """
+    table_name = "users"
+
+    users = db.get_table(table_name)
+    john_record_id = 1
+
+    second_table_name = "posts"
+    db.create_table(
+        second_table_name,
+        {
+            "user_id": int,
+            "title": str,
+            "body": str,
+            "created_at": datetime,
+            "updated_at": datetime,
+            "deleted_at": Union[datetime, None],
+        },
+    )
+
+    db.create_foreign_key(second_table_name, "user_id", table_name)
+
+    db.insert_record_into_table(
+        second_table_name,
+        {
+            "user_id": john_record_id,
+            "title": "My first post",
+            "body": "This is my first post.",
+            "created_at": datetime.now(tz=pytz.UTC),
+            "updated_at": datetime.now(tz=pytz.UTC),
+            "deleted_at": None,
+        },
+    )
+
+    db.update_record_by_id_into_table(
+        second_table_name,
+        1,
+        {
+            "user_id": john_record_id,
+            "title": "My first post",
+            "body": "This is my first post UPDATED!.",
+            "created_at": datetime.now(tz=pytz.UTC),
+            "updated_at": datetime.now(tz=pytz.UTC),
+            "deleted_at": None,
+        },
+    )
+
+def test_inverted_index():
+    db = __create_database()
+
+    __create_users_table(db)
+
+    __create_posts_table(db)
+
+    posts = db.get_table("posts")
+
+    posts.create_inverted_index("body")
+
+    logger.debug(f"inverted_indexes: {posts.inverted_indexes}")
+
 if __name__ == "__main__":
-    main()
+    # main()
+    test_inverted_index()
