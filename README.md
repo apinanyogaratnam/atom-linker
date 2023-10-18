@@ -24,6 +24,7 @@
 TODO:
 - return the row id as well when returning a list of records
 - need to lowercase all strings before inverted indexing + removing punctuation and diacritics
+- root word indexing: basically stemming where you remove the suffixes and prefixes of words to get the root word and then whenever a search is done, you remove the suffixes and prefixes of the search term and then search for the root word which will be indexes leading to more cases where the search term will be found in the index
 - text search using elasticsearch or sphinx data structures
 - consider using generators
 - for indexes, add it sorted? might need to define a separate index attribute for sorted indexing
