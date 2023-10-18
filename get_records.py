@@ -1,7 +1,6 @@
 
 from indexes import Indexes
 from internal_types import ColumnName, Record
-from stop_words import STOP_WORDS
 
 
 class GetRecords(Indexes):

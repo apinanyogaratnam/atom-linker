@@ -1,6 +1,6 @@
+import time
 from datetime import datetime
 from typing import Union
-import time
 
 import pytz
 
@@ -184,7 +184,10 @@ def __create_database() -> Database:
 
 
 def __create_users_table(db: Database) -> None:
-    """Create a table named "users" with columns for first name, last name, email, created at, updated at, and deleted at.
+    """Create a table named "users".
+
+    This function creates a table named "users" with columns for first name, last name,
+    email, created at, updated at, and deleted at. It then inserts two records into the table.
 
     Args:
     ----
@@ -208,7 +211,7 @@ def __create_users_table(db: Database) -> None:
         },
     )
 
-    john_record_id = db.insert_record_into_table(
+    db.insert_record_into_table(
         table_name,
         {
             "first_name": "John",
@@ -220,7 +223,7 @@ def __create_users_table(db: Database) -> None:
         },
     )
 
-    jane_record_id = db.insert_record_into_table(
+    db.insert_record_into_table(
         table_name,
         {
             "first_name": "Jane",
@@ -246,7 +249,7 @@ def __create_posts_table(db: Database) -> None:
     """
     table_name = "users"
 
-    users = db.get_table(table_name)
+    db.get_table(table_name)
     john_record_id = 1
 
     second_table_name = "posts"
@@ -289,7 +292,22 @@ def __create_posts_table(db: Database) -> None:
         },
     )
 
-def test_inverted_index():
+def test_inverted_index() -> None:
+    """Creates an inverted index on the 'body' field of the posts table.
+
+    The function first creates a database and tables for users and posts.
+    It then gets the posts table and calls create_inverted_index() on it to build an inverted index on the 'body' field.
+
+    The index creation is logged before and after a delay to observe any changes.
+
+    Args:
+    ----
+    None
+
+    Returns:
+    -------
+    None
+    """
     db = __create_database()
 
     __create_users_table(db)

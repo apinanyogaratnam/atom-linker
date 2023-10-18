@@ -1,13 +1,12 @@
 from collections import defaultdict
-from threading import Thread, Lock
+from threading import Lock, Thread
 from typing import Any
 
 from get_records import GetRecords
 from indexes import Indexes
 from internal_types import Columns, Index, InvertedIndex
-from stop_words import STOP_WORDS
-
 from log import get_logger
+from stop_words import STOP_WORDS
 
 logger = get_logger(__file__)
 
@@ -44,7 +43,9 @@ class Table(GetRecords, Indexes):
         self.count = 0
         self.records = {}
 
-        self.indexes: Index = defaultdict(lambda: defaultdict(set)) # TODO: @apinanyogaratnam: need to remove all if conditions that checks wether the item exists or not to create a new set
+        # TODO: @apinanyogaratnam: need to remove all if conditions that checks wether
+        # TODO: the item exists or not to create a new set
+        self.indexes: Index = defaultdict(lambda: defaultdict(set))
         self.unique_indexes = {}
         self.inverted_indexes: InvertedIndex = {} # text search
 
