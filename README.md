@@ -40,6 +40,10 @@ TODO:
 - add threading and locks
 - if a key is being used by a foreign key, then it cannot be deleted
 - think if diacritics should be removed or not when doing sanitized search
+- test this at massive scale (need to do millions of inserts and then do millions of searches, etc.)
+- maybe do tokenized search with the inverted index?
+- maybe do combinations of the words in the inverted index?
+- look at my batchrequest package i made?
 
 NOTES:
 
