@@ -44,6 +44,7 @@ TODO:
 - maybe do tokenized search with the inverted index?
 - maybe do combinations of the words in the inverted index?
 - look at my batchrequest package i made?
+- need to add a way to create a table from a csv file
 
 NOTES:
 

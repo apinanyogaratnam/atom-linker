@@ -54,6 +54,7 @@ class Table(GetRecords, Indexes):
 
         self.foreign_keys = {}
 
+    # TODO: @apinanyogaratnam: need to be aware of the lock for self.indexes
     def insert_record(self, record: dict[str, Any]) -> int:
         """Insert a record into the instance.
 
@@ -167,6 +168,7 @@ class Table(GetRecords, Indexes):
                 msg = f"Record value for {column_name} must be {column_type}."
                 raise TypeError(msg)
 
+    # TODO: @apinanyogaratnam: need to be aware of the lock for self.indexes
     def update_record_by_id(self, record_id: int, record: dict[str, Any]) -> object:
         """Update a record in the instance by record_id.
 
@@ -233,6 +235,7 @@ class Table(GetRecords, Indexes):
             msg = f"Record with id {record_id} does not exist."
             raise ValueError(msg)
 
+    # TODO: @apinanyogaratnam: need to be aware of the lock for self.indexes
     def delete_record_by_id(self, record_id: int) -> None:
         """Delete a record from the instance by record_id.
 
