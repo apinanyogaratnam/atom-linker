@@ -6,6 +6,7 @@ elasticsearch. This database currently runs on memory only at the moment.
 There is no third party packages used in this repo.
 
 
+<!--
 - indexes
 - relations (pk and fk)
 - locks
@@ -60,3 +61,5 @@ NOTES:
 # delete all sorter.py.log files in git history
 
 git filter-branch --force --index-filter 'git rm --cached --ignore-unmatch sorter.py.log' --prune-empty --tag-name-filter cat -- --all
+
+-->
