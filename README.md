@@ -45,6 +45,7 @@ TODO:
 - maybe do combinations of the words in the inverted index?
 - look at my batchrequest package i made?
 - need to add a way to create a table from a csv file
+- add locks for all indexes and make them threaded
 
 NOTES:
 
