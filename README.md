@@ -1,3 +1,10 @@
+# Atom Linker
+
+Atom Linker is a relational database that is suited for text search. This was inspired by
+the optimizations and relations postgresql provides and the text search capabilities of
+elasticsearch. This database currently runs on memory only at the moment.
+
+
 - indexes
 - relations (pk and fk)
 - locks
