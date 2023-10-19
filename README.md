@@ -46,6 +46,7 @@ TODO:
 - look at my batchrequest package i made?
 - need to add a way to create a table from a csv file
 - add locks for all indexes and make them threaded
+- might need autovacuuming since the indexes can still exist even if the row is deleted. maybe save the threads that are running in self.running_indexes_threads and then when the index is deleted, check if the thread is in self.running_indexes_threads and if it is, then kill the thread safely and then delete the index
 
 NOTES:
 
