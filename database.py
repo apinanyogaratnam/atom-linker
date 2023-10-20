@@ -333,3 +333,17 @@ class Database:
 
         records.sort(key=lambda x: x[sort_by], reverse=reverse)
         return None
+
+    def shutdown(self) -> None:
+        """Shutdown the database.
+
+        Args:
+        ----
+        self: The current object.
+
+        Returns:
+        -------
+        None
+        """
+        for table in self.tables.values():
+            table.shutdown()
