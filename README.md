@@ -61,6 +61,8 @@ TODO:
 - might need autovacuuming since the indexes can still exist even if the row is deleted. maybe save the threads that are running in self.running_indexes_threads and then when the index is deleted, check if the thread is in self.running_indexes_threads and if it is, then kill the thread safely and then delete the index
 - consider using multiprocessing instead of threading
 - might be an issue with having both index and unique index for the same column
+- need to error handle i.e. try catch and if any errors occur, handle the errors, make sure to shutdown tables if need be
+- for the server, might need to find something super fast or use grpc with strictly using strings to allow for any types
 
 NOTES:
 
