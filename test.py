@@ -163,7 +163,7 @@ def main() -> None:  # sourcery skip: extract-duplicate-method
     logger.debug(f"indexes: {posts.inverted_indexes}")
 
 
-def __create_database() -> Database:
+def _create_database() -> Database:
     """Create a database instance with the name "test".
 
     Args:
@@ -183,7 +183,7 @@ def __create_database() -> Database:
     return db
 
 
-def __create_users_table(db: Database) -> None:
+def _create_users_table(db: Database) -> None:
     """Create a table named "users".
 
     This function creates a table named "users" with columns for first name, last name,
@@ -236,7 +236,24 @@ def __create_users_table(db: Database) -> None:
     )
 
 
-def __create_posts_table(db: Database) -> None:
+def _create_post(db: Database) -> None:
+    second_table_name = "posts"
+    john_record_id = 1
+
+    db.insert_record_into_table(
+        second_table_name,
+        {
+            "user_id": john_record_id,
+            "title": "My first post",
+            "body": "This is my first post.",
+            "created_at": datetime.now(tz=pytz.UTC),
+            "updated_at": datetime.now(tz=pytz.UTC),
+            "deleted_at": None,
+        },
+    )
+
+
+def _create_posts_table(db: Database) -> None:
     """Create a table named "posts" with columns for user id, title, body, created at, updated at, and deleted at.
 
     Args:
@@ -267,17 +284,7 @@ def __create_posts_table(db: Database) -> None:
 
     db.create_foreign_key(second_table_name, "user_id", table_name)
 
-    db.insert_record_into_table(
-        second_table_name,
-        {
-            "user_id": john_record_id,
-            "title": "My first post",
-            "body": "This is my first post.",
-            "created_at": datetime.now(tz=pytz.UTC),
-            "updated_at": datetime.now(tz=pytz.UTC),
-            "deleted_at": None,
-        },
-    )
+    _create_post(db)
 
     db.update_record_by_id_into_table(
         second_table_name,
@@ -308,11 +315,11 @@ def test_inverted_index() -> None:
     -------
     None
     """
-    db = __create_database()
+    db = _create_database()
 
-    __create_users_table(db)
+    _create_users_table(db)
 
-    __create_posts_table(db)
+    _create_posts_table(db)
 
     posts = db.get_table("posts")
 
@@ -341,13 +348,16 @@ def test_index() -> None:
     -------
     None
     """
-    db = __create_database()
+    db = _create_database()
 
-    __create_users_table(db)
+    _create_users_table(db)
 
-    __create_posts_table(db)
+    _create_posts_table(db)
 
     posts = db.get_table("posts")
+
+    for _ in range(1000):
+        _create_post(db)
 
     posts.create_index("body")
 
