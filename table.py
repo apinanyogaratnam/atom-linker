@@ -9,8 +9,11 @@ from log import get_logger
 from stop_words import STOP_WORDS
 
 from concurrent.futures import ThreadPoolExecutor
+import os
 
 logger = get_logger(__file__)
+
+num_cores = os.cpu_count()
 
 
 # NOTE: might not need to inherit from Indexes since we are already inheriting from GetRecords
@@ -56,7 +59,8 @@ class Table(GetRecords, Indexes):
         self.column_locks: dict[ColumnName, Lock] = {}
         # NOTE: need to make this configurable or figure out how to dynamically set it based on resources
         # this is the pool of threads that will be used to create indexes
-        self.index_executor = ThreadPoolExecutor(max_workers=10)
+        # adjust max workers when dealing with io bound tasks
+        self.index_executor = ThreadPoolExecutor(max_workers=num_cores)
 
         self.unique_indexes = {}
         self.unique_index_lock = Lock()
