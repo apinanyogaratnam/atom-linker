@@ -61,6 +61,7 @@ class Table(GetRecords, Indexes):
         # this is the pool of threads that will be used to create indexes
         # adjust max workers when dealing with io bound tasks
         # adjust max workers after testing speeds in real world situations and profiling
+        # num cores is not a good number, need to find a better number
         self.index_executor = ThreadPoolExecutor(max_workers=num_cores)
 
         self.unique_indexes = {}
