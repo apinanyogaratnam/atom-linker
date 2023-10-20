@@ -372,14 +372,16 @@ def test_index() -> None:
 
     logger.debug(f"indexes: {posts.indexes}")
 
-    for _ in range(1000000):
+    for i in range(1000000):
         _create_post(db)
-        if len(posts.records_to_index['body']) > 0:
-            logger.debug(f"records to index: {posts.records_to_index}")
+        # if len(posts.records_to_index['body']) > 0:
+        #     logger.debug(f"records to index: {posts.records_to_index}")
+
+        if i % 100 == 0:
+            records = posts.get_records_by_column("body", "This is my first post.")
+            # logger.debug(f"records: {len(records)}")
 
     logger.debug(f"indexes: {posts.indexes}")
-
-    # TODO: @apinanyogaratnam: test the get methods while creating and indexing to see if race conditions occur
 
     db.shutdown()
 
