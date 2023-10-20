@@ -299,6 +299,7 @@ def _create_posts_table(db: Database) -> None:
         },
     )
 
+
 def test_inverted_index() -> None:
     """Creates an inverted index on the 'body' field of the posts table.
 
