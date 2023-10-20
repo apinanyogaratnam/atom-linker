@@ -463,3 +463,6 @@ class Table(GetRecords, Indexes):
 
     def shutdown_executors(self) -> None:
         self.close_index_executor()
+
+    def shutdown(self) -> None:
+        self.shutdown_executors()
