@@ -324,6 +324,41 @@ def test_inverted_index() -> None:
 
     logger.debug(f"inverted_indexes: {posts.inverted_indexes}")
 
+
+def test_index() -> None:
+    """Creates an index on the 'body' field of the posts table.
+
+    The function first creates a database and tables for users and posts.
+    It then gets the posts table and calls create_index() on it to build an index on the 'body' field.
+
+    The index creation is logged before and after a delay to observe any changes.
+
+    Args:
+    ----
+    None
+
+    Returns:
+    -------
+    None
+    """
+    db = __create_database()
+
+    __create_users_table(db)
+
+    __create_posts_table(db)
+
+    posts = db.get_table("posts")
+
+    posts.create_index("body")
+
+    logger.debug(f"indexes: {posts.indexes}")
+
+    time.sleep(5)
+
+    logger.debug(f"indexes: {posts.indexes}")
+
+
 if __name__ == "__main__":
     # main()
-    test_inverted_index()
+    # test_inverted_index()
+    test_index()
