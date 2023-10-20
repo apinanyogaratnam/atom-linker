@@ -1,6 +1,5 @@
 from collections import defaultdict
-from threading import Lock, Thread
-import time
+from threading import Lock
 from typing import Any
 
 from get_records import GetRecords
@@ -80,7 +79,6 @@ class Table(GetRecords, Indexes):
             self.records_to_index[column_name] = set()
 
     def _create_records_to_index_thread(self) -> None:
-        time.sleep(100)
         for column_name, record_ids in self.records_to_index.items():
             column_lock = self.column_locks[column_name]
 
