@@ -31,6 +31,9 @@ There is no third party packages used in this repo.
 - search types: https://chat.openai.com/c/f0ec05f9-0d97-4774-8699-3a3548a4c398
 
 TODO:
+
+- need to save threads in the event of deleting an indexed column, need to know the running threads and then kill them safely?
+- batch inserts
 - return the row id as well when returning a list of records
 - need to lowercase all strings before inverted indexing + removing punctuation and diacritics
 - root word indexing: basically stemming where you remove the suffixes and prefixes of words to get the root word and then whenever a search is done, you remove the suffixes and prefixes of the search term and then search for the root word which will be indexes leading to more cases where the search term will be found in the index
@@ -56,6 +59,8 @@ TODO:
 - need to add a way to create a table from a csv file
 - add locks for all indexes and make them threaded
 - might need autovacuuming since the indexes can still exist even if the row is deleted. maybe save the threads that are running in self.running_indexes_threads and then when the index is deleted, check if the thread is in self.running_indexes_threads and if it is, then kill the thread safely and then delete the index
+- consider using multiprocessing instead of threading
+- might be an issue with having both index and unique index for the same column
 
 NOTES:
 

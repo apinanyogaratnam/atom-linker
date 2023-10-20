@@ -48,7 +48,9 @@ class GetRecords(Indexes):
         record_ids = set()
         if column_name in self.indexes and column_value in self.indexes[column_name]:
             is_indexed = True
-            record_ids = set(self.indexes[column_name][column_value])
+            column_lock = self.column_locks[column_name]
+            with column_lock:
+                record_ids = set(self.indexes[column_name][column_value])
 
         if column_name in self.unique_indexes and column_value in self.unique_indexes[column_name]:
             is_indexed = True
@@ -95,6 +97,7 @@ class GetRecords(Indexes):
         return record
 
     def get_records_by_broad_search(self, column_name: ColumnName, search_text: str) -> list[Record]:
+        # sourcery skip: merge-repeated-ifs
         """Get records from the instance by column_name and search_text.
 
         Args:
@@ -121,10 +124,10 @@ class GetRecords(Indexes):
 
         record_ids = set()
         for word in self.get_sanitized_words(search_text):
-            with self.inverted_index_lock:  # Lock when accessing the inverted index
-                in_inverted_index = column_name in self.inverted_indexes and word in self.inverted_indexes[column_name]
-                if in_inverted_index:
-                    _record_ids = self.inverted_indexes[column_name][word]
+            # with self.inverted_index_lock:  # Lock when accessing the inverted index
+            in_inverted_index = column_name in self.inverted_indexes and word in self.inverted_indexes[column_name]
+            if in_inverted_index:
+                _record_ids = self.inverted_indexes[column_name][word]
 
             # Continue using the acquired _record_ids, if available, outside of the lock
             if in_inverted_index:
