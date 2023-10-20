@@ -32,6 +32,7 @@ There is no third party packages used in this repo.
 
 TODO:
 
+- a problem with get records by column is that if an index is being created, there is a likely chance that only some of the data is available in the index so the records being returned will not be the full list. might need to make sure no threads are active when creating the index or do something with is_index_being_built = True/False per column basis.
 - need to save threads in the event of deleting an indexed column, need to know the running threads and then kill them safely?
 - batch inserts
 - return the row id as well when returning a list of records
@@ -62,7 +63,11 @@ TODO:
 - consider using multiprocessing instead of threading
 - might be an issue with having both index and unique index for the same column
 - need to error handle i.e. try catch and if any errors occur, handle the errors, make sure to shutdown tables if need be
-- for the server, might need to find something super fast or use grpc with strictly using strings to allow for any types
+- for the server, might need to find something super fast or use grpc with strictly using strings to allow for any types. might just end up making our own protocol based on TCP.
+- security i.e. usernames, database names, passwords, ports; SSL i.e. encrypted data when transferring data between networks
+- listen/notify (probably need to experiment with real time data project to better understand this)
+- prepared statements?
+- partitioning?
 
 NOTES:
 
@@ -73,3 +78,10 @@ NOTES:
 git filter-branch --force --index-filter 'git rm --cached --ignore-unmatch sorter.py.log' --prune-empty --tag-name-filter cat -- --all
 
 -->
+
+
+THIS PR:
+- need to remove todo comments about threading
+- code review
+- testing
+- make format
