@@ -368,6 +368,13 @@ def test_index() -> None:
 
     logger.debug(f"indexes: {posts.indexes}")
 
+    for _ in range(1000000):
+        _create_post(db)
+        logger.debug(f"records to index: {posts.records_to_index}")
+
+    logger.debug(f"records to index: {posts.records_to_index}")
+
+    # TODO: @apinanyogaratnam: test the get methods while creating and indexing to see if race conditions occur
 
 if __name__ == "__main__":
     # main()
