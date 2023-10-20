@@ -162,6 +162,8 @@ def main() -> None:  # sourcery skip: extract-duplicate-method
     posts.create_inverted_index("body")
     logger.debug(f"indexes: {posts.inverted_indexes}")
 
+    db.shutdown()
+
 
 def _create_database() -> Database:
     """Create a database instance with the name "test".
@@ -332,6 +334,8 @@ def test_inverted_index() -> None:
 
     logger.debug(f"inverted_indexes: {posts.inverted_indexes}")
 
+    db.shutdown()
+
 
 def test_index() -> None:
     """Creates an index on the 'body' field of the posts table.
@@ -370,11 +374,15 @@ def test_index() -> None:
 
     for _ in range(1000000):
         _create_post(db)
-        logger.debug(f"records to index: {posts.records_to_index}")
+        if len(posts.records_to_index['body']) > 0:
+            logger.debug(f"records to index: {posts.records_to_index}")
 
-    logger.debug(f"records to index: {posts.records_to_index}")
+    logger.debug(f"indexes: {posts.indexes}")
 
     # TODO: @apinanyogaratnam: test the get methods while creating and indexing to see if race conditions occur
+
+    db.shutdown()
+
 
 if __name__ == "__main__":
     # main()
