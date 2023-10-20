@@ -48,7 +48,8 @@ class Table(GetRecords, Indexes):
         self.indexes: Index = defaultdict(lambda: defaultdict(set))
         self.index_lock = Lock()
         self.records_to_index: dict[RowId, ColumnName] = {} # can get the column value from the record
-        self.column_locks: dict[ColumnName, Lock] = {} # need to make sure when columns are being CRUD, the lock is also being CRUD
+        # need to make sure when columns are being CRUD, the lock is also being CRUD
+        self.column_locks: dict[ColumnName, Lock] = {}
 
         self.unique_indexes = {}
         self.unique_index_lock = Lock()
