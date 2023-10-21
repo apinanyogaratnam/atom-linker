@@ -242,7 +242,7 @@ def _create_post(db: Database) -> int:
     second_table_name = "posts"
     john_record_id = 1
 
-    record_id = db.insert_record_into_table(
+    return db.insert_record_into_table(
         second_table_name,
         {
             "user_id": john_record_id,
@@ -254,7 +254,6 @@ def _create_post(db: Database) -> int:
         },
     )
 
-    return record_id
 
 
 def _create_posts_table(db: Database) -> None:
