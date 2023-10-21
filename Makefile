@@ -14,3 +14,6 @@ truncate-file:
 	truncate -s 0 logs/main.py.log
 	truncate -s 0 logs/client.py.log
 	truncate -s 0 logs/protocol.py.log
+
+lint:
+	ruff --check .
