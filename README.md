@@ -68,6 +68,7 @@ TODO:
 - listen/notify (probably need to experiment with real time data project to better understand this)
 - prepared statements?
 - partitioning?
+- have some sort of ordering for fast binary search
 
 NOTES:
 
