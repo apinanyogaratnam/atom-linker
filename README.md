@@ -3,7 +3,9 @@
 Atom Linker is a relational database that is suited for text search. This was inspired by
 the optimizations and relations postgresql provides and the text search capabilities of
 elasticsearch. This database currently runs on memory only at the moment.
-There is no third party packages used in this repo.
+There is no third party packages used in this repo. This is a pure python implementation.
+This database allows for reading while indexes are being built but reads will be slower
+until the index is finished building (similar to CONCURRENTLY in postgres when creating indexes).
 
 
 <!--
@@ -31,6 +33,13 @@ There is no third party packages used in this repo.
 - search types: https://chat.openai.com/c/f0ec05f9-0d97-4774-8699-3a3548a4c398
 
 TODO:
+
+- consider sequential threading for indexes (sequential transactions)
+- add 'row level locking' so that if methods outside of the db are being threaded, then the db will not be affected
+- use the wait from concurrent.futures to wait for all threads to finish before returning the data and i can have futures for each type of index so i can wait for all of them to complete
+- a problem with get records by column is that if an index is being created, there is a likely chance that only some of the data is available in the index so the records being returned will not be the full list. might need to make sure no threads are active when creating the index or do something with is_index_being_built = True/False per column basis.
+- need to save threads in the event of deleting an indexed column, need to know the running threads and then kill them safely?
+- batch inserts
 - return the row id as well when returning a list of records
 - need to lowercase all strings before inverted indexing + removing punctuation and diacritics
 - root word indexing: basically stemming where you remove the suffixes and prefixes of words to get the root word and then whenever a search is done, you remove the suffixes and prefixes of the search term and then search for the root word which will be indexes leading to more cases where the search term will be found in the index
@@ -53,6 +62,19 @@ TODO:
 - maybe do tokenized search with the inverted index?
 - maybe do combinations of the words in the inverted index?
 - look at my batchrequest package i made?
+- need to add a way to create a table from a csv file
+- add locks for all indexes and make them threaded
+- might need autovacuuming since the indexes can still exist even if the row is deleted. maybe save the threads that are running in self.running_indexes_threads and then when the index is deleted, check if the thread is in self.running_indexes_threads and if it is, then kill the thread safely and then delete the index
+- consider using multiprocessing instead of threading
+- might be an issue with having both index and unique index for the same column
+- need to error handle i.e. try catch and if any errors occur, handle the errors, make sure to shutdown tables if need be
+- for the server, might need to find something super fast or use grpc with strictly using strings to allow for any types. might just end up making our own protocol based on TCP.
+- security i.e. usernames, database names, passwords, ports; SSL i.e. encrypted data when transferring data between networks
+- listen/notify (probably need to experiment with real time data project to better understand this)
+- prepared statements?
+- partitioning?
+- have some sort of ordering for fast binary search
+- use .get instead of [] for dicts for faster performance
 
 NOTES:
 

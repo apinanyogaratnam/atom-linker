@@ -6,4 +6,6 @@ COPY . .
 
 # RUN pip install -r requirements.txt
 
+ENV LOG_LEVEL=INFO
+
 CMD ["python", "main.py"]

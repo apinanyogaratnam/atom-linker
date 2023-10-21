@@ -1,3 +1,0 @@
-2023-10-17 23:08:47,834 - test.py - DEBUG - <database.Database object at 0x100a562c0>
-2023-10-17 23:08:47,840 - test.py - DEBUG - inverted_indexes: {'body': defaultdict(<class 'set'>, {'updated': {1}, 'post': {1}})}
-2023-10-17 23:08:52,842 - test.py - DEBUG - inverted_indexes: {'body': defaultdict(<class 'set'>, {'updated': {1}, 'post': {1}})}

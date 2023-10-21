@@ -162,8 +162,10 @@ def main() -> None:  # sourcery skip: extract-duplicate-method
     posts.create_inverted_index("body")
     logger.debug(f"indexes: {posts.inverted_indexes}")
 
+    db.shutdown()
 
-def __create_database() -> Database:
+
+def _create_database() -> Database:
     """Create a database instance with the name "test".
 
     Args:
@@ -183,7 +185,7 @@ def __create_database() -> Database:
     return db
 
 
-def __create_users_table(db: Database) -> None:
+def _create_users_table(db: Database) -> None:
     """Create a table named "users".
 
     This function creates a table named "users" with columns for first name, last name,
@@ -236,7 +238,25 @@ def __create_users_table(db: Database) -> None:
     )
 
 
-def __create_posts_table(db: Database) -> None:
+def _create_post(db: Database) -> int:
+    second_table_name = "posts"
+    john_record_id = 1
+
+    return db.insert_record_into_table(
+        second_table_name,
+        {
+            "user_id": john_record_id,
+            "title": "My first post",
+            "body": "This is my first post.",
+            "created_at": datetime.now(tz=pytz.UTC),
+            "updated_at": datetime.now(tz=pytz.UTC),
+            "deleted_at": None,
+        },
+    )
+
+
+
+def _create_posts_table(db: Database) -> None:
     """Create a table named "posts" with columns for user id, title, body, created at, updated at, and deleted at.
 
     Args:
@@ -267,17 +287,7 @@ def __create_posts_table(db: Database) -> None:
 
     db.create_foreign_key(second_table_name, "user_id", table_name)
 
-    db.insert_record_into_table(
-        second_table_name,
-        {
-            "user_id": john_record_id,
-            "title": "My first post",
-            "body": "This is my first post.",
-            "created_at": datetime.now(tz=pytz.UTC),
-            "updated_at": datetime.now(tz=pytz.UTC),
-            "deleted_at": None,
-        },
-    )
+    _create_post(db)
 
     db.update_record_by_id_into_table(
         second_table_name,
@@ -291,6 +301,7 @@ def __create_posts_table(db: Database) -> None:
             "deleted_at": None,
         },
     )
+
 
 def test_inverted_index() -> None:
     """Creates an inverted index on the 'body' field of the posts table.
@@ -308,11 +319,11 @@ def test_inverted_index() -> None:
     -------
     None
     """
-    db = __create_database()
+    db = _create_database()
 
-    __create_users_table(db)
+    _create_users_table(db)
 
-    __create_posts_table(db)
+    _create_posts_table(db)
 
     posts = db.get_table("posts")
 
@@ -324,6 +335,86 @@ def test_inverted_index() -> None:
 
     logger.debug(f"inverted_indexes: {posts.inverted_indexes}")
 
+    db.shutdown()
+
+
+def test_index() -> None:
+    """Creates an index on the 'body' field of the posts table.
+
+    The function first creates a database and tables for users and posts.
+    It then gets the posts table and calls create_index() on it to build an index on the 'body' field.
+
+    The index creation is logged before and after a delay to observe any changes.
+
+    Args:
+    ----
+    None
+
+    Returns:
+    -------
+    None
+    """
+    db = _create_database()
+
+    _create_users_table(db)
+
+    _create_posts_table(db)
+
+    posts = db.get_table("posts")
+
+    for _ in range(1000):
+        _create_post(db)
+
+    posts.create_index("body")
+
+    logger.debug(f"indexes: {posts.indexes}")
+
+    time.sleep(5)
+
+    logger.debug(f"indexes: {posts.indexes}")
+
+    for i in range(1000000):
+        record_id = _create_post(db)
+        # if len(posts.records_to_index['body']) > 0:
+        #     logger.debug(f"records to index: {posts.records_to_index}")
+
+        if i % 100 == 0:
+            posts.get_records_by_column("body", "This is my first post.")
+            # logger.debug(f"records: {len(records)}")
+
+            start_time = time.perf_counter()
+            posts.update_record_by_id(
+                record_id,
+                {
+                    "user_id": 1,
+                    "title": "My first post",
+                    "body": "This is my first post. UPDATED!!!!!!!!!",
+                    "created_at": datetime.now(tz=pytz.UTC),
+                    "updated_at": datetime.now(tz=pytz.UTC),
+                    "deleted_at": None,
+                },
+            )
+            end_time = time.perf_counter()
+            time_taken = end_time - start_time
+            if time_taken > 1:
+                logger.debug(f"update_record_by_id took: {end_time - start_time}")
+                logger.debug(f"indexes: {posts.indexes}")
+
+            start_time = time.perf_counter()
+            posts.delete_record_by_id(record_id)
+            end_time = time.perf_counter()
+            time_taken = end_time - start_time
+            if time_taken > 1:
+                logger.debug(f"delete_record_by_id took: {end_time - start_time}")
+
+    time.sleep(5)
+
+    logger.debug(f"indexes: {posts.indexes}")
+
+    db.shutdown()
+
+
 if __name__ == "__main__":
     # main()
-    test_inverted_index()
+    # test_inverted_index()
+    test_index()

@@ -1,14 +1,18 @@
+import os
 from collections import defaultdict
-from threading import Lock, Thread
+from concurrent.futures import ThreadPoolExecutor
+from threading import Lock
 from typing import Any
 
 from get_records import GetRecords
 from indexes import Indexes
-from internal_types import Columns, Index, InvertedIndex
+from internal_types import ColumnName, Columns, Index, InvertedIndex, RowId
 from log import get_logger
 from stop_words import STOP_WORDS
 
 logger = get_logger(__file__)
+
+num_cores = os.cpu_count()
 
 
 # NOTE: might not need to inherit from Indexes since we are already inheriting from GetRecords
@@ -46,12 +50,95 @@ class Table(GetRecords, Indexes):
         # TODO: @apinanyogaratnam: need to remove all if conditions that checks wether
         # TODO: the item exists or not to create a new set
         self.indexes: Index = defaultdict(lambda: defaultdict(set))
-        self.unique_indexes = {}
-        self.inverted_indexes: InvertedIndex = {} # text search
+        # can get the column value from the record
+        self.records_to_index: dict[ColumnName, set[RowId]] = defaultdict(set)
+        self.records_to_index_lock = Lock()
+        # need to make sure when columns are being CRUD, the lock is also being CRUD
+        self.column_locks: dict[ColumnName, Lock] = {}
+        self.undergoing_column_indexing: dict[ColumnName, int] = defaultdict(int)
+        self.undergoing_column_indexing_lock = Lock()
+        # NOTE: need to make this configurable or figure out how to dynamically set it based on resources
+        # this is the pool of threads that will be used to create indexes
+        # adjust max workers when dealing with io bound tasks
+        # adjust max workers after testing speeds in real world situations and profiling
+        # num cores is not a good number, need to find a better number
+        self.index_executor = ThreadPoolExecutor(max_workers=num_cores)
 
+        self.unique_indexes = {}
+        self.unique_index_lock = Lock()
+
+        # text search
+        self.inverted_indexes: InvertedIndex = {}
         self.inverted_index_lock = Lock()
 
         self.foreign_keys = {}
+
+        self._create_column_locks()
+        self._create_records_to_index_keys()
+
+    def _create_column_locks(self) -> None:
+        for column_name in self.columns:
+            self.column_locks[column_name] = Lock()
+
+    def _create_records_to_index_keys(self) -> None:
+        for column_name in self.columns:
+            self.records_to_index[column_name] = set()
+
+    def _create_records_to_index_thread(self) -> None:
+        columns = self.records_to_index.keys()
+        with self.undergoing_column_indexing_lock:
+            for column_name in columns:
+                self.undergoing_column_indexing[column_name] += 1
+
+        for column_name, record_ids in self.records_to_index.items():
+            column_lock = self.column_locks[column_name]
+
+            with self.records_to_index_lock:
+                for record_id in record_ids:
+                    column_value = self.records[record_id][column_name]
+
+                    with column_lock:
+                        self.indexes[column_name][column_value].add(record_id)
+
+                self.records_to_index[column_name].clear()
+
+        with self.undergoing_column_indexing_lock:
+            for column_name in columns:
+                self.undergoing_column_indexing[column_name] -= 1
+
+    def is_column_indexed(self, column_name: str) -> bool:
+        """Check if a column is indexed.
+
+        Args:
+        ----
+        self: The current object.
+        column_name (str): The name of the column to check.
+
+        Returns:
+        -------
+        bool: True if the column is indexed, False otherwise.
+        """
+        if not self.is_column_locked(column_name):
+            return False
+        if column_name not in self.indexes:
+            return False
+
+        with self.undergoing_column_indexing_lock:
+            return self.undergoing_column_indexing[column_name] == 0
+
+    def is_column_locked(self, column_name: str) -> bool:
+        """Check if a column is locked.
+
+        Args:
+        ----
+        self: The current object.
+        column_name (str): The name of the column to check.
+
+        Returns:
+        -------
+        bool: True if the column is locked, False otherwise.
+        """
+        return self.column_locks[column_name].locked()
 
     def insert_record(self, record: dict[str, Any]) -> int:
         """Insert a record into the instance.
@@ -72,16 +159,13 @@ class Table(GetRecords, Indexes):
         -------
         int: The id of the record.
         """
-        # self.__validate_record(record)
         self.count += 1
         self.records[self.count] = record
 
         for column_name, column_value in record.items():
             if column_name in self.indexes:
-                if column_value not in self.indexes[column_name]:
-                    self.indexes[column_name][column_value] = []
-
-                self.indexes[column_name][column_value].append(self.count)
+                with self.records_to_index_lock:
+                    self.records_to_index[column_name].add(self.count)
 
             if column_name in self.unique_indexes:
                 if column_value in self.unique_indexes[column_name]:
@@ -96,6 +180,8 @@ class Table(GetRecords, Indexes):
                         self.inverted_indexes[column_name][word] = set()
 
                     self.inverted_indexes[column_name][word].add(self.count)
+
+        self.index_executor.submit(self._create_records_to_index_thread)
 
         return self.count
 
@@ -190,20 +276,26 @@ class Table(GetRecords, Indexes):
         object: The record.
         """
         self.validate_update_record_by_id(record_id, record)
-
         old_record = self.records[record_id]
-        for column_name, column_value in old_record.items():
-            if column_name in self.indexes:
-                self.indexes[column_name][column_value].remove(record_id)
 
+        for column_name, old_column_value in old_record.items():
+            # Handle normal indexes
+            if column_name in self.indexes:
+                new_column_value = record[column_name]
+
+                with self.column_locks[column_name]:
+                    if old_column_value in self.indexes[column_name]:
+                        self.indexes[column_name][old_column_value].discard(record_id)
+                    self.indexes[column_name][new_column_value].add(record_id)
+
+            # Handle unique indexes
             if column_name in self.unique_indexes:
-                self.unique_indexes[column_name].pop(column_value)
+                self.unique_indexes[column_name].pop(old_column_value, None)
 
         self.records[record_id] = record
-
         return self.records[record_id]
 
-    def __validate_delete_record_by_id(self, record_id: int) -> None:
+    def _validate_delete_record_by_id(self, record_id: int) -> None:
         """Validate the arguments for the delete_record_by_id method.
 
         Args:
@@ -250,15 +342,20 @@ class Table(GetRecords, Indexes):
         -------
         None
         """
-        self.__validate_delete_record_by_id(record_id)
+        self._validate_delete_record_by_id(record_id)
         record = self.records.pop(record_id)
 
         for column_name, column_value in record.items():
             if column_name in self.indexes:
-                self.indexes[column_name][column_value].remove(record_id)
+                column_index = self.indexes.get(column_name, {})
+                if record_ids := column_index.get(column_value, set()):
+                    column_lock = self.column_locks[column_name]
+                    with column_lock:
+                        record_ids.discard(record_id)
 
             if column_name in self.unique_indexes:
-                self.unique_indexes[column_name].pop(column_value)
+                unique_index = self.unique_indexes.get(column_name, {})
+                unique_index.pop(column_value, None)
 
     def create_unique_index(self, column_name: str) -> None:
         """Create a unique index on a column.
@@ -290,6 +387,19 @@ class Table(GetRecords, Indexes):
 
             self.unique_indexes[column_name][value] = record_id
 
+    def _create_index_thread(self, column_name: str) -> None:
+        with self.undergoing_column_indexing_lock:
+            self.undergoing_column_indexing[column_name] += 1
+
+        for record_id, record in self.records.items():
+            column_lock = self.column_locks[column_name]
+            column_value = record[column_name]
+            with column_lock:
+                self.indexes[column_name][column_value].add(record_id)
+
+        with self.undergoing_column_indexing_lock:
+            self.undergoing_column_indexing[column_name] -= 1
+
     def create_index(self, column_name: str) -> None:
         """Create an index on a column.
 
@@ -310,14 +420,11 @@ class Table(GetRecords, Indexes):
             msg = f"Column {column_name} does not exist."
             raise ValueError(msg)
 
-        self.indexes[column_name] = {}
+        if column_name in self.indexes:
+            msg = f"Index for column {column_name} already exists."
+            raise ValueError(msg)
 
-        for record_id, record in self.records.items():
-            value = record[column_name]
-            if value not in self.indexes[column_name]:
-                self.indexes[column_name][value] = set()
-
-            self.indexes[column_name][value].add(record_id)
+        self.index_executor.submit(self._create_index_thread, column_name)
 
     def create_foreign_key_column(self, column_name: str, foreign_table: "Table") -> None:
         """Create a foreign key column.
@@ -347,6 +454,7 @@ class Table(GetRecords, Indexes):
         self.foreign_keys[column_name] = foreign_table.name
 
     def _create_inverted_index_thread(self, column_name: str) -> None:
+        # NOTE: need to rewrite this method
         local_index = defaultdict(set)
         for record_id, record in self.records.items():
             for word in self.get_sanitized_words(record[column_name]):
@@ -383,6 +491,60 @@ class Table(GetRecords, Indexes):
             msg = f"Cannot create inverted index for column {column_name} because it is not a string."
             raise ValueError(msg)
 
-        # TODO: @apinanyogaratnam: make this multiprocessing for greater performance
-        thread = Thread(target=self._create_inverted_index_thread, args=(column_name,))
-        thread.start()
+        # thread = Thread(target=self._create_inverted_index_thread, args=(column_name,))
+        # thread.start()
+
+        for record_id, record in self.records.items():
+            if column_name not in self.inverted_indexes:
+                self.inverted_indexes[column_name] = {}
+
+            for word in self.get_sanitized_words(record[column_name]):
+                if word not in self.inverted_indexes[column_name]:
+                    self.inverted_indexes[column_name][word] = set()
+
+                self.inverted_indexes[column_name][word].add(record_id)
+
+    def close_index_executor(self) -> None:
+        """Close the index executor.
+
+        Shuts down the index executor.
+
+        Args:
+        ----
+        self: The instance of the class.
+
+        Returns:
+        -------
+        None
+        """
+        self.index_executor.shutdown()
+
+    def shutdown_executors(self) -> None:
+        """Shutdown the executors.
+
+        Calls the `close_index_executor` method to shut down the index executor.
+
+        Args:
+        ----
+        self: The instance of the class.
+
+        Returns:
+        -------
+        None
+        """
+        self.close_index_executor()
+
+    def shutdown(self) -> None:
+        """Shutdown the object.
+
+        Calls the `shutdown_executors` method to shut down the executors.
+
+        Args:
+        ----
+        self: The instance of the class.
+
+        Returns:
+        -------
+        None
+        """
+        self.shutdown_executors()

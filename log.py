@@ -1,8 +1,18 @@
 import logging
 import os
 
+log_level_str = os.environ.get("LOG_LEVEL", "DEBUG")
+log_level = {
+    "CRITICAL": logging.CRITICAL,
+    "ERROR": logging.ERROR,
+    "WARNING": logging.WARNING,
+    "INFO": logging.INFO,
+    "DEBUG": logging.DEBUG,
+    "NOTSET": logging.NOTSET,
+}.get(log_level_str, logging.DEBUG)
 
-def get_logger(file: str, level: int = logging.DEBUG) -> logging.Logger:
+
+def get_logger(file: str, level: int = log_level) -> logging.Logger:
     """Get a logger instance.
 
     Args:
