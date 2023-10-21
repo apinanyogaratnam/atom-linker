@@ -25,7 +25,6 @@ class GetRecords(Indexes):
         """
         return list(self.records.values())
 
-    # TODO: @apinanyogaratnam: need to be aware of the lock for self.indexes
     def get_records_by_column(self, column_name: str, column_value: object) -> list[object]:
         """Get records from the instance by column_name and column_value.
 
