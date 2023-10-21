@@ -289,8 +289,8 @@ class Table(GetRecords, Indexes):
                     self.indexes[column_name][column_value].remove(record_id)
 
                     # reindex the record
-                    column_value = record[column_name]
-                    self.indexes[column_name][column_value].add(record_id)
+                    new_column_value = record[column_name]
+                    self.indexes[column_name][new_column_value].add(record_id)
 
             if column_name in self.unique_indexes and column_value in self.unique_indexes[column_name]:
                 self.unique_indexes[column_name].pop(column_value)
