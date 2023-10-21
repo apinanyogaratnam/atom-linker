@@ -43,6 +43,7 @@ TODO:
     - storing unstructured data i.e. json
     - ordered sets/arrays
     - sets
+- need to save all data to disk in an efficient way maybe something like mapping record ids to filenames in json or something and this needs to be handled in an async way
 - consider sequential threading for indexes (sequential transactions)
 - add 'row level locking' so that if methods outside of the db are being threaded, then the db will not be affected
 - use the wait from concurrent.futures to wait for all threads to finish before returning the data and i can have futures for each type of index so i can wait for all of them to complete
