@@ -49,7 +49,9 @@ class GetRecords(Indexes):
 
         is_indexed = False
         record_ids = set()
-        if column_name in self.indexes and column_value in self.indexes[column_name]:
+
+        is_column_indexed =  self.is_column_indexed(column_name)
+        if is_column_indexed and column_name in self.indexes and column_value in self.indexes[column_name]:
             is_indexed = True
             column_lock = self.column_locks[column_name]
             with column_lock:

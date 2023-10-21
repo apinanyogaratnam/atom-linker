@@ -51,12 +51,13 @@ class Table(GetRecords, Indexes):
         # TODO: @apinanyogaratnam: need to remove all if conditions that checks wether
         # TODO: the item exists or not to create a new set
         self.indexes: Index = defaultdict(lambda: defaultdict(set))
-        self.index_lock = Lock()
         # can get the column value from the record
         self.records_to_index: dict[ColumnName, set[RowId]] = defaultdict(set)
         self.records_to_index_lock = Lock()
         # need to make sure when columns are being CRUD, the lock is also being CRUD
         self.column_locks: dict[ColumnName, Lock] = {}
+        self.undergoing_column_indexing: dict[ColumnName, int] = defaultdict(int)
+        self.undergoing_column_indexing_lock = Lock()
         # NOTE: need to make this configurable or figure out how to dynamically set it based on resources
         # this is the pool of threads that will be used to create indexes
         # adjust max workers when dealing with io bound tasks
@@ -85,6 +86,11 @@ class Table(GetRecords, Indexes):
             self.records_to_index[column_name] = set()
 
     def _create_records_to_index_thread(self) -> None:
+        columns = self.records_to_index.keys()
+        with self.undergoing_column_indexing_lock:
+            for column_name in columns:
+                self.undergoing_column_indexing[column_name] += 1
+
         for column_name, record_ids in self.records_to_index.items():
             column_lock = self.column_locks[column_name]
 
@@ -96,6 +102,30 @@ class Table(GetRecords, Indexes):
                         self.indexes[column_name][column_value].add(record_id)
 
                 self.records_to_index[column_name].clear()
+
+        with self.undergoing_column_indexing_lock:
+            for column_name in columns:
+                self.undergoing_column_indexing[column_name] -= 1
+
+    def is_column_indexed(self, column_name: str) -> bool:
+        """Check if a column is indexed.
+
+        Args:
+        ----
+        self: The current object.
+        column_name (str): The name of the column to check.
+
+        Returns:
+        -------
+        bool: True if the column is indexed, False otherwise.
+        """
+        if not self.is_column_locked(column_name):
+            return False
+        if column_name not in self.indexes:
+            return False
+
+        with self.undergoing_column_indexing_lock:
+            return self.undergoing_column_indexing[column_name] == 0
 
     def is_column_locked(self, column_name: str) -> bool:
         """Check if a column is locked.
@@ -352,11 +382,17 @@ class Table(GetRecords, Indexes):
             self.unique_indexes[column_name][value] = record_id
 
     def _create_index_thread(self, column_name: str) -> None:
+        with self.undergoing_column_indexing_lock:
+            self.undergoing_column_indexing[column_name] += 1
+
         for record_id, record in self.records.items():
             column_lock = self.column_locks[column_name]
             column_value = record[column_name]
             with column_lock:
                 self.indexes[column_name][column_value].add(record_id)
+
+        with self.undergoing_column_indexing_lock:
+            self.undergoing_column_indexing[column_name] -= 1
 
     def create_index(self, column_name: str) -> None:
         """Create an index on a column.
