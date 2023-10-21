@@ -69,6 +69,7 @@ TODO:
 - prepared statements?
 - partitioning?
 - have some sort of ordering for fast binary search
+- use .get instead of [] for dicts for faster performance
 
 NOTES:
 
