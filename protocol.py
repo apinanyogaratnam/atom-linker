@@ -22,7 +22,7 @@ class TcpProtocol(ExecuteQuery):
 
     async def create_server(self) -> None:
         server = await asyncio.start_server(self.handle_client_request, "0.0.0.0", 5432)
-addr = server.sockets[0].getsockname()
+        addr = server.sockets[0].getsockname()
         logger.info(f"Serving on {addr}")
 
         async with server:
