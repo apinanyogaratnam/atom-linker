@@ -1,4 +1,6 @@
+import os
 from collections import defaultdict
+from concurrent.futures import ThreadPoolExecutor
 from threading import Lock
 from typing import Any
 
@@ -7,9 +9,6 @@ from indexes import Indexes
 from internal_types import ColumnName, Columns, Index, InvertedIndex, RowId
 from log import get_logger
 from stop_words import STOP_WORDS
-
-from concurrent.futures import ThreadPoolExecutor
-import os
 
 logger = get_logger(__file__)
 
