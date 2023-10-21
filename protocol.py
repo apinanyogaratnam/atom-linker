@@ -1,6 +1,6 @@
 import asyncio
-from errors import InvalidQueryException
 
+from errors import InvalidQueryException
 from execute_query import ExecuteQuery
 from log import get_logger
 

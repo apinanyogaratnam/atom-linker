@@ -15,7 +15,7 @@ async def main():
     response = data.decode()
     logger.info(f"Received: {response!r}")
 
-    if 'InvalidQueryException' in response:
+    if "InvalidQueryException" in response:
         logger.error(response)
         return
 
