@@ -238,11 +238,11 @@ def _create_users_table(db: Database) -> None:
     )
 
 
-def _create_post(db: Database) -> None:
+def _create_post(db: Database) -> int:
     second_table_name = "posts"
     john_record_id = 1
 
-    db.insert_record_into_table(
+    record_id = db.insert_record_into_table(
         second_table_name,
         {
             "user_id": john_record_id,
@@ -253,6 +253,8 @@ def _create_post(db: Database) -> None:
             "deleted_at": None,
         },
     )
+
+    return record_id
 
 
 def _create_posts_table(db: Database) -> None:
@@ -373,7 +375,7 @@ def test_index() -> None:
     logger.debug(f"indexes: {posts.indexes}")
 
     for i in range(1000000):
-        _create_post(db)
+        record_id = _create_post(db)
         # if len(posts.records_to_index['body']) > 0:
         #     logger.debug(f"records to index: {posts.records_to_index}")
 
@@ -383,7 +385,7 @@ def test_index() -> None:
 
             start_time = time.perf_counter()
             posts.update_record_by_id(
-                1,
+                record_id,
                 {
                     "user_id": 1,
                     "title": "My first post",
@@ -398,6 +400,14 @@ def test_index() -> None:
             if time_taken > 1:
                 logger.debug(f"update_record_by_id took: {end_time - start_time}")
                 logger.debug(f"indexes: {posts.indexes}")
+
+            start_time = time.perf_counter()
+            posts.delete_record_by_id(record_id)
+            end_time = time.perf_counter()
+            time_taken = end_time - start_time
+            if time_taken > 1:
+                logger.debug(f"delete_record_by_id took: {end_time - start_time}")
+
 
     logger.debug(f"indexes: {posts.indexes}")
 
