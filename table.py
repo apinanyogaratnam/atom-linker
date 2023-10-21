@@ -548,3 +548,8 @@ class Table(GetRecords, Indexes):
         None
         """
         self.shutdown_executors()
+        # self.finish all threads and save all data to disk
+
+    def delete(self) -> None:
+        # TODO: implement this
+        pass
