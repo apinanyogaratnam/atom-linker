@@ -407,6 +407,8 @@ def test_index() -> None:
             if time_taken > 1:
                 logger.debug(f"delete_record_by_id took: {end_time - start_time}")
 
+    time.sleep(5)
+
     logger.debug(f"indexes: {posts.indexes}")
 
     db.shutdown()
