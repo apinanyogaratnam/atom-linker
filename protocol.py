@@ -1,4 +1,5 @@
 import asyncio
+from errors import InvalidQueryException
 
 from execute_query import ExecuteQuery
 from log import get_logger
@@ -13,7 +14,15 @@ class TcpProtocol(ExecuteQuery):
         addr = writer.get_extra_info("peername")
         logger.info(f"Received {message} from {addr}")
 
-        self.execute_query(message)
+        try:
+            self.execute_query(message)
+        except InvalidQueryException as error:
+            logger.error(f"Invalid query: {error}")
+            msg = str(error)
+            writer.write(bytes(msg, "utf-8"))
+            await writer.drain()
+            writer.close()
+            return
 
         logger.info("Send: ACK!")
         writer.write(b"ACK!")

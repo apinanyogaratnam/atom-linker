@@ -7,11 +7,17 @@ logger = get_logger(__file__)
 async def main():
     reader, writer = await asyncio.open_connection("localhost", 5432)
 
-    logger.info("Sending: Hello, Server!")
+    logger.info("Sending: 'CREATE DATABASE test'")
     writer.write(b"CREATE DATABASE test")
 
     data = await reader.read(100)
-    logger.info(f"Received: {data.decode()!r}")
+
+    response = data.decode()
+    logger.info(f"Received: {response!r}")
+
+    if 'InvalidQueryException' in response:
+        logger.error(response)
+        return
 
     logger.info("Closing the connection")
     writer.close()
