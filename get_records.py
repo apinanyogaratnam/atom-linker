@@ -1,8 +1,8 @@
 
 from indexes import Indexes
 from internal_types import ColumnName, Record
-
 from log import get_logger
+
 logger = get_logger(__file__)
 
 
@@ -62,7 +62,7 @@ class GetRecords(Indexes):
             record_id = self.unique_indexes[column_name][column_value]
             record_ids.add(record_id)
 
-        logger.debug(f'used index: {is_indexed}')
+        logger.debug(f"used index: {is_indexed}")
 
         if not is_indexed:
             for record_id, record in self.records.items():
