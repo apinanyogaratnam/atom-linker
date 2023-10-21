@@ -293,7 +293,7 @@ class Table(GetRecords, Indexes):
 
         return self.records[record_id]
 
-    def __validate_delete_record_by_id(self, record_id: int) -> None:
+    def _validate_delete_record_by_id(self, record_id: int) -> None:
         """Validate the arguments for the delete_record_by_id method.
 
         Args:
@@ -341,7 +341,7 @@ class Table(GetRecords, Indexes):
         -------
         None
         """
-        self.__validate_delete_record_by_id(record_id)
+        self._validate_delete_record_by_id(record_id)
         record = self.records.pop(record_id)
 
         for column_name, column_value in record.items():
