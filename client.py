@@ -1,15 +1,20 @@
-import socket
-
+import asyncio
 from log import get_logger
 
 logger = get_logger(__file__)
 
-def main():
-    client = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-    client.connect(("localhost", 5432))
-    client.send(b"Hello, Server!")
-    response = client.recv(4096)
-    logger.info(response)
+async def main():
+    reader, writer = await asyncio.open_connection('localhost', 5432)
+
+    logger.info('Sending: Hello, Server!')
+    writer.write(b'Hello, Server!')
+
+    data = await reader.read(100)
+    logger.info(f'Received: {data.decode()!r}')
+
+    logger.info('Closing the connection')
+    writer.close()
+    await writer.wait_closed()
 
 if __name__ == "__main__":
-    main()
+    asyncio.run(main())

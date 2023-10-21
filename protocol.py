@@ -1,30 +1,37 @@
-import socket
-import threading
+import asyncio
+from execute_query import ExecuteQuery
 
 from log import get_logger
 
 logger = get_logger(__file__)
 
 
-class TcpProtocol:
-    def __init__(self) -> None:
-        pass
+class TcpProtocol(ExecuteQuery):
+    def __init__(self):
+        databases = {}
 
-    def handle_client(self, client_socket: socket.socket) -> None:
-        request = client_socket.recv(1024)
-        logger.info(f"Received: {request}")
-        client_socket.send(b"ACK!")
-        client_socket.close()
+    async def handle_client_request(self, reader: asyncio.StreamReader, writer: asyncio.StreamWriter) -> None:
+        data = await reader.read(100)
+        message = data.decode()
+        addr = writer.get_extra_info('peername')
+        logger.info(f"Received {message} from {addr}")
 
-    def create_server(self) -> None:
-        server = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-        server.bind(("0.0.0.0", 5432))
-        server.listen(5)
-        logger.info("Server listening on port 5432")
+        self.execute_query(message)
 
-        while True:
-            client_sock, addr = server.accept()
-            logger.info(f"Accepted connection from: {addr}")
-            client_handler = threading.Thread(target=self.handle_client, args=(client_sock,))
-            client_handler.start()
- 
+        logger.info("Send: ACK!")
+        writer.write(b"ACK!")
+        await writer.drain()
+        writer.close()
+
+    async def create_server(self) -> None:
+        server = await asyncio.start_server(self.handle_client_request, '0.0.0.0', 5432)
+        addr = server.sockets[0].getsockname()
+        logger.info(f"Serving on {addr}")
+
+        async with server:
+            await server.serve_forever()
+
+
+if __name__ == "__main__":
+    tcp_protocol = TcpProtocol()
+    asyncio.run(tcp_protocol.create_server())
