@@ -279,25 +279,25 @@ class Table(GetRecords, Indexes):
         object: The record.
         """
         self.validate_update_record_by_id(record_id, record)
-
         old_record = self.records[record_id]
-        for column_name, column_value in old_record.items():
-            # NOTE: currently deleting the index and reindexing the record synchronously. Need to test the performance of this and see if it can be done asynchronously i.e. threads
-            if column_name in self.indexes and column_value in self.indexes[column_name] and record_id in self.indexes[column_name][column_value]:
-                column_lock = self.column_locks[column_name]
-                with column_lock:
-                    self.indexes[column_name][column_value].remove(record_id)
 
-                    # reindex the record
-                    new_column_value = record[column_name]
+        for column_name, old_column_value in old_record.items():
+            # Handle normal indexes
+            if column_name in self.indexes:
+                new_column_value = record[column_name]
+
+                with self.column_locks[column_name]:
+                    if old_column_value in self.indexes[column_name]:
+                        self.indexes[column_name][old_column_value].discard(record_id)
                     self.indexes[column_name][new_column_value].add(record_id)
 
-            if column_name in self.unique_indexes and column_value in self.unique_indexes[column_name]:
-                self.unique_indexes[column_name].pop(column_value)
+            # Handle unique indexes
+            if column_name in self.unique_indexes:
+                self.unique_indexes[column_name].pop(old_column_value, None)
 
         self.records[record_id] = record
-
         return self.records[record_id]
+
 
     def _validate_delete_record_by_id(self, record_id: int) -> None:
         """Validate the arguments for the delete_record_by_id method.
@@ -351,13 +351,17 @@ class Table(GetRecords, Indexes):
         record = self.records.pop(record_id)
 
         for column_name, column_value in record.items():
-            if column_name in self.indexes and column_value in self.indexes[column_name] and record_id in self.indexes[column_name][column_value]:
-                column_lock = self.column_locks[column_name]
-                with column_lock:
-                    self.indexes[column_name][column_value].remove(record_id)
+            if column_name in self.indexes:
+                column_index = self.indexes.get(column_name, {})
+                if record_ids := column_index.get(column_value, set()):
+                    column_lock = self.column_locks[column_name]
+                    with column_lock:
+                        record_ids.discard(record_id)
 
-            if column_name in self.unique_indexes and column_value in self.unique_indexes[column_name]:
-                self.unique_indexes[column_name].pop(column_value)
+            if column_name in self.unique_indexes:
+                unique_index = self.unique_indexes.get(column_name, {})
+                unique_index.pop(column_value, None)
+
 
     def create_unique_index(self, column_name: str) -> None:
         """Create a unique index on a column.
@@ -507,10 +511,46 @@ class Table(GetRecords, Indexes):
                 self.inverted_indexes[column_name][word].add(record_id)
 
     def close_index_executor(self) -> None:
+        """Close the index executor.
+
+        Shuts down the index executor.
+
+        Args:
+        ----
+        self: The instance of the class.
+
+        Returns:
+        -------
+        None
+        """
         self.index_executor.shutdown()
 
     def shutdown_executors(self) -> None:
+        """Shutdown the executors.
+
+        Calls the `close_index_executor` method to shut down the index executor.
+
+        Args:
+        ----
+        self: The instance of the class.
+
+        Returns:
+        -------
+        None
+        """
         self.close_index_executor()
 
     def shutdown(self) -> None:
+        """Shutdown the object.
+
+        Calls the `shutdown_executors` method to shut down the executors.
+
+        Args:
+        ----
+        self: The instance of the class.
+
+        Returns:
+        -------
+        None
+        """
         self.shutdown_executors()
