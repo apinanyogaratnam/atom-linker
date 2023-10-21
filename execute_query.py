@@ -1,6 +1,5 @@
-from errors import InvalidQueryException
-
 from database import Database
+from errors import InvalidQueryException
 
 
 class ExecuteQuery:
@@ -17,4 +16,5 @@ class ExecuteQuery:
             db = Database(database_name)
             self.databases[database_name] = db
         else:
-            raise InvalidQueryException("failed to execute query")
+            msg = "failed to execute query"
+            raise InvalidQueryException(msg)
