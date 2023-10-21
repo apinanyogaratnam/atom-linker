@@ -34,6 +34,8 @@ until the index is finished building (similar to CONCURRENTLY in postgres when c
 
 TODO:
 
+- consider sequential threading for indexes (sequential transactions)
+- add 'row level locking' so that if methods outside of the db are being threaded, then the db will not be affected
 - a problem with get records by column is that if an index is being created, there is a likely chance that only some of the data is available in the index so the records being returned will not be the full list. might need to make sure no threads are active when creating the index or do something with is_index_being_built = True/False per column basis.
 - need to save threads in the event of deleting an indexed column, need to know the running threads and then kill them safely?
 - batch inserts
