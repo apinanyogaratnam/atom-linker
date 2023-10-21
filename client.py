@@ -8,7 +8,7 @@ async def main():
     reader, writer = await asyncio.open_connection("localhost", 5432)
 
     logger.info("Sending: Hello, Server!")
-    writer.write(b"Hello, Server!")
+    writer.write(b"CREATE DATABASE test")
 
     data = await reader.read(100)
     logger.info(f"Received: {data.decode()!r}")
