@@ -378,8 +378,26 @@ def test_index() -> None:
         #     logger.debug(f"records to index: {posts.records_to_index}")
 
         if i % 100 == 0:
-            records = posts.get_records_by_column("body", "This is my first post.")
+            posts.get_records_by_column("body", "This is my first post.")
             # logger.debug(f"records: {len(records)}")
+
+            start_time = time.perf_counter()
+            posts.update_record_by_id(
+                1,
+                {
+                    "user_id": 1,
+                    "title": "My first post",
+                    "body": "This is my first post. UPDATED!!!!!!!!!",
+                    "created_at": datetime.now(tz=pytz.UTC),
+                    "updated_at": datetime.now(tz=pytz.UTC),
+                    "deleted_at": None,
+                },
+            )
+            end_time = time.perf_counter()
+            time_taken = end_time - start_time
+            if time_taken > 1:
+                logger.debug(f"update_record_by_id took: {end_time - start_time}")
+                logger.debug(f"indexes: {posts.indexes}")
 
     logger.debug(f"indexes: {posts.indexes}")
 
