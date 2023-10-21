@@ -7,9 +7,6 @@ logger = get_logger(__file__)
 
 
 class TcpProtocol(ExecuteQuery):
-    def __init__(self):
-        databases = {}
-
     async def handle_client_request(self, reader: asyncio.StreamReader, writer: asyncio.StreamWriter) -> None:
         data = await reader.read(100)
         message = data.decode()
