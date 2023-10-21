@@ -85,8 +85,5 @@ git filter-branch --force --index-filter 'git rm --cached --ignore-unmatch sorte
 
 
 THIS PR:
-- fixing the first TODO item (if the index is still being created, just query it manually; basically check if self.index_lock.locked(). might need to set a higher scope lock so the lock stops being acquired once the index is actually finished;these are just thoughts, plan accordingly and consult chatgpt)
-- need to remove todo comments about threading
 - code review
 - testing
-- make format
