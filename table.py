@@ -283,10 +283,17 @@ class Table(GetRecords, Indexes):
 
         old_record = self.records[record_id]
         for column_name, column_value in old_record.items():
-            if column_name in self.indexes:
-                self.indexes[column_name][column_value].remove(record_id)
+            # NOTE: currently deleting the index and reindexing the record synchronously. Need to test the performance of this and see if it can be done asynchronously i.e. threads
+            if column_name in self.indexes and column_value in self.indexes[column_name] and record_id in self.indexes[column_name][column_value]:
+                column_lock = self.column_locks[column_name]
+                with column_lock:
+                    self.indexes[column_name][column_value].remove(record_id)
 
-            if column_name in self.unique_indexes:
+                    # reindex the record
+                    column_value = record[column_name]
+                    self.indexes[column_name][column_value].add(record_id)
+
+            if column_name in self.unique_indexes and column_value in self.unique_indexes[column_name]:
                 self.unique_indexes[column_name].pop(column_value)
 
         self.records[record_id] = record
@@ -345,10 +352,12 @@ class Table(GetRecords, Indexes):
         record = self.records.pop(record_id)
 
         for column_name, column_value in record.items():
-            if column_name in self.indexes:
-                self.indexes[column_name][column_value].remove(record_id)
+            if column_name in self.indexes and column_value in self.indexes[column_name] and record_id in self.indexes[column_name][column_value]:
+                column_lock = self.column_locks[column_name]
+                with column_lock:
+                    self.indexes[column_name][column_value].remove(record_id)
 
-            if column_name in self.unique_indexes:
+            if column_name in self.unique_indexes and column_value in self.unique_indexes[column_name]:
                 self.unique_indexes[column_name].pop(column_value)
 
     def create_unique_index(self, column_name: str) -> None:
