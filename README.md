@@ -85,8 +85,3 @@ NOTES:
 git filter-branch --force --index-filter 'git rm --cached --ignore-unmatch sorter.py.log' --prune-empty --tag-name-filter cat -- --all
 
 -->
-
-
-THIS PR:
-- code review
-- testing
