@@ -357,7 +357,6 @@ class Table(GetRecords, Indexes):
                 unique_index = self.unique_indexes.get(column_name, {})
                 unique_index.pop(column_value, None)
 
-
     def create_unique_index(self, column_name: str) -> None:
         """Create a unique index on a column.
 
