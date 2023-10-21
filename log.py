@@ -1,14 +1,14 @@
 import logging
 import os
 
-log_level_str = os.environ.get('LOG_LEVEL', 'DEBUG')
+log_level_str = os.environ.get("LOG_LEVEL", "DEBUG")
 log_level = {
-    'CRITICAL': logging.CRITICAL,
-    'ERROR': logging.ERROR,
-    'WARNING': logging.WARNING,
-    'INFO': logging.INFO,
-    'DEBUG': logging.DEBUG,
-    'NOTSET': logging.NOTSET
+    "CRITICAL": logging.CRITICAL,
+    "ERROR": logging.ERROR,
+    "WARNING": logging.WARNING,
+    "INFO": logging.INFO,
+    "DEBUG": logging.DEBUG,
+    "NOTSET": logging.NOTSET,
 }.get(log_level_str, logging.DEBUG)
 
 
