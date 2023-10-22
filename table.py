@@ -551,5 +551,16 @@ class Table(GetRecords, Indexes):
         # self.finish all threads and save all data to disk
 
     def delete(self) -> None:
+        """Delete the table.
+
+        This method is responsible for deleting the table.
+
+        Args:
+        ----
+        self: The instance of the class.
+
+        Returns:
+        -------
+        None
+        """
         # TODO: implement this
-        pass
