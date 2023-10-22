@@ -12,7 +12,7 @@ def decompress_string(compressed_data):
 
 # Example usage
 if __name__ == "__main__":
-    original_string = "This is an example string to be compressed using LZMA. LZMA provides a high compression ratio!"
+    original_string = "This is an example string to be compressed using LZMA. LZMA provides a high compression ratio!" * 100000000000
 
     # Compress the string
     compressed_data = compress_string(original_string)
@@ -21,4 +21,4 @@ if __name__ == "__main__":
 
     # Decompress the string
     decompressed_string = decompress_string(compressed_data)
-    print("Decompressed string:", decompressed_string)
+    # print("Decompressed string:", decompressed_string)
