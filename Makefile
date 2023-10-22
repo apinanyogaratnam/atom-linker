@@ -16,4 +16,4 @@ truncate-file:
 	truncate -s 0 logs/protocol.py.log
 
 lint:
-	ruff --check .
+	ruff .
