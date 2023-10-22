@@ -47,7 +47,11 @@ TODO:
 
 - aggregate functions like sum, avg, min, max, etc.
 - aggregate functions but it will be always precomputed i.e. when a row is inserted, the aggregate functions will be updated in the background
-- hyperloglog for unique counts
+- hyperloglog for unique counts:
+    - https://www.youtube.com/watch?v=lJYufx0bfpw
+    - https://chat.openai.com/c/f9947e04-d811-4ef5-9245-d7702e223140
+    - https://algo.inria.fr/flajolet/Publications/FlFuGaMe07.pdf
+    - https://static.googleusercontent.com/media/research.google.com/en//pubs/archive/40671.pdf
 - need to save all data to disk in an efficient way maybe something like mapping record ids to filenames in json or something and this needs to be handled in an async way
 - consider sequential threading for indexes (sequential transactions)
 - add 'row level locking' so that if methods outside of the db are being threaded, then the db will not be affected
