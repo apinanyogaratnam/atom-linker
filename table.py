@@ -11,6 +11,7 @@ from log import get_logger
 from stats import Stats
 from stats_enums import StatsType
 from stop_words import STOP_WORDS
+from thread_stats import ThreadStats
 
 logger = get_logger(__file__)
 
@@ -75,7 +76,7 @@ class Table(GetRecords, Indexes):
 
         self.foreign_keys = {}
 
-        self.stats = Stats()
+        self.thread_stats = ThreadStats()
 
         self._create_column_locks()
         self._create_records_to_index_keys()
@@ -158,7 +159,7 @@ class Table(GetRecords, Indexes):
         -------
         None
         """
-        self.stats.insert(StatsType.THREADS, {
+        self.thread_stats.insert(StatsType.THREADS, {
             "name": func.__name__,
             "args": args,
             "kwargs": kwargs,

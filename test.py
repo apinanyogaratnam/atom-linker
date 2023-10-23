@@ -412,7 +412,8 @@ def test_index() -> None:
 
     logger.debug(f"indexes: {posts.indexes}")
 
-    logger.debug(f"threads stats: {posts.stats.get(StatsType.THREADS)}")
+    logger.debug(f"threads stats: {posts.thread_stats.get(StatsType.THREADS)}")
+    logger.debug(f"average threads per minute: {posts.thread_stats.average_threads_per_minute()}")
 
     db.shutdown()
 
