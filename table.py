@@ -207,7 +207,7 @@ class Table(GetRecords, Indexes):
 
                     self.inverted_indexes[column_name][word].add(self.count)
 
-        self.index_executor.submit(self._create_records_to_index_thread)
+        self.submit_thread(self._create_records_to_index_thread)
 
         return self.count
 
@@ -450,7 +450,7 @@ class Table(GetRecords, Indexes):
             msg = f"Index for column {column_name} already exists."
             raise ValueError(msg)
 
-        self.index_executor.submit(self._create_index_thread, column_name)
+        self.submit_thread(self._create_records_to_index_thread, column_name)
 
     def create_foreign_key_column(self, column_name: str, foreign_table: "Table") -> None:
         """Create a foreign key column.
