@@ -94,6 +94,8 @@ TODO:
 - partitioning?
 - have some sort of ordering for fast binary search
 - use .get instead of [] for dicts for faster performance
+- ability to store documents i.e. document db like amazon s3 + ability to only return chunks of the document so that the entire document is not loaded into memory at once
+- store blobs? binary large objects
 
 NOTES:
 
