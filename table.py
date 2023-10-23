@@ -8,7 +8,6 @@ from get_records import GetRecords
 from indexes import Indexes
 from internal_types import ColumnName, Columns, Index, InvertedIndex, RowId
 from log import get_logger
-from stats import Stats
 from stats_enums import StatsType
 from stop_words import STOP_WORDS
 from thread_stats import ThreadStats
