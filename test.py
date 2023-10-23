@@ -6,6 +6,7 @@ import pytz
 
 from database import Database
 from log import get_logger
+from stats_enums import StatsType
 
 logger = get_logger(__file__)
 
@@ -410,6 +411,8 @@ def test_index() -> None:
     time.sleep(5)
 
     logger.debug(f"indexes: {posts.indexes}")
+
+    logger.debug(f"threads stats: {posts.stats.get(StatsType.THREADS)}")
 
     db.shutdown()
 

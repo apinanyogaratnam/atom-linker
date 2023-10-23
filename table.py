@@ -8,6 +8,8 @@ from get_records import GetRecords
 from indexes import Indexes
 from internal_types import ColumnName, Columns, Index, InvertedIndex, RowId
 from log import get_logger
+from stats import Stats
+from stats_enums import StatsType
 from stop_words import STOP_WORDS
 
 logger = get_logger(__file__)
@@ -72,6 +74,8 @@ class Table(GetRecords, Indexes):
         self.inverted_index_lock = Lock()
 
         self.foreign_keys = {}
+
+        self.stats = Stats()
 
         self._create_column_locks()
         self._create_records_to_index_keys()
@@ -139,6 +143,28 @@ class Table(GetRecords, Indexes):
         bool: True if the column is locked, False otherwise.
         """
         return self.column_locks[column_name].locked()
+
+    def submit_thread(self, func, *args, **kwargs) -> None:
+        """Submit a thread.
+
+        Args:
+        ----
+        self: The current object.
+        func: The function to run.
+        *args: The arguments to pass to the function.
+        **kwargs: The keyword arguments to pass to the function.
+
+        Returns:
+        -------
+        None
+        """
+        self.stats.insert(StatsType.THREADS, {
+            "name": func.__name__,
+            "args": args,
+            "kwargs": kwargs,
+            "table": self.name,
+        })
+        self.index_executor.submit(func, *args, **kwargs)
 
     def insert_record(self, record: dict[str, Any]) -> int:
         """Insert a record into the instance.
