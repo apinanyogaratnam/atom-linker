@@ -1,5 +1,6 @@
 from collections import defaultdict
 from datetime import datetime
+
 import pytz
 
 
@@ -12,8 +13,8 @@ class Stats:
             self._stats[name] = []
 
         self._stats[name].append({
-            'value': value,
-            'timestamp': datetime.now(pytz.utc)
+            "value": value,
+            "timestamp": datetime.now(pytz.utc),
         })
 
     def get(self, name: str) -> list:

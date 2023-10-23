@@ -1,4 +1,5 @@
 from collections import defaultdict
+
 from stats import Stats
 from stats_enums import StatsType
 
@@ -17,7 +18,7 @@ class ThreadStats(Stats):
         store = defaultdict(int)
 
         for entry in data:
-            timestamp = entry['timestamp'].strftime('%Y-%m-%d %H:%M')
+            timestamp = entry["timestamp"].strftime("%Y-%m-%d %H:%M")
             store[timestamp] += 1
 
         return sum(store.values()) / len(store) if store else 0
