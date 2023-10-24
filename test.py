@@ -418,7 +418,12 @@ def test_index() -> None:
     db.shutdown()
 
 
+def test_init_directory_database():
+    db = Database("test")
+
+
 if __name__ == "__main__":
     # main()
     # test_inverted_index()
-    test_index()
+    # test_index()
+    test_init_directory_database()
