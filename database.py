@@ -1,3 +1,4 @@
+import os
 from typing import Any, Union
 
 from internal_types import Columns
@@ -48,6 +49,28 @@ class Database:
 
         self.name = name
         self.tables: dict[str, Table] = {}
+
+        self.init_disk_directory()
+
+    def init_disk_directory(self) -> None:
+        """Initialize the disk directory for the database.
+
+        Args:
+        ----
+        self: The current object.
+
+        Returns:
+        -------
+        None
+        """
+        if not os.path.exists("data"):
+            os.mkdir("data")
+
+        if not os.path.exists(f"data/databases"):
+            os.mkdir(f"data/databases")
+
+        if not os.path.exists(f"data/databases/{self.name}"):
+            os.mkdir(f"data/databases/{self.name}")
 
     def is_type_or_union_of_types(self, x: object) -> bool:
         """Check if the given object is a type or a union of types.
