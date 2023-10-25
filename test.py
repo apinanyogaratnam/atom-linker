@@ -422,8 +422,24 @@ def test_init_directory_database():
     db = Database("test")
 
 
+def test_init_directory_table():
+    db = Database("test")
+    db.create_table(
+        "users",
+        {
+            "first_name": str,
+            "last_name": str,
+            "email": str,
+            "created_at": datetime,
+            "updated_at": datetime,
+            "deleted_at": Union[datetime, None],
+        },
+    )
+
+
 if __name__ == "__main__":
     # main()
     # test_inverted_index()
     # test_index()
-    test_init_directory_database()
+    # test_init_directory_database()
+    test_init_directory_table()
