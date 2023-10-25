@@ -31,7 +31,7 @@ class Table(GetRecords, Indexes):
         None
     """
 
-    def __init__(self, name: str, columns: Columns) -> None:
+    def __init__(self, database_name: str, name: str, columns: Columns) -> None:
         """Initialize a new instance of the class.
 
         Args:
@@ -45,6 +45,7 @@ class Table(GetRecords, Indexes):
         None
         """
         self.name: str = name
+        self.database_name: str = database_name
         self.columns: Columns = columns
         self.count = 0
         self.records = {}
@@ -77,8 +78,26 @@ class Table(GetRecords, Indexes):
 
         self.thread_stats = ThreadStats()
 
+        self.init_disk_directory()
+
         self._create_column_locks()
         self._create_records_to_index_keys()
+
+    def init_disk_directory(self) -> None:
+        """Initialize the disk directory for the database.
+
+        Args:
+        ----
+        self: The current object.
+
+        Returns:
+        -------
+        None
+        """
+        if os.path.exists(f"data/databases/{self.database_name}/{self.name}"):
+            raise ValueError(f"Table {self.name} directory already exists.")
+
+        os.mkdir(f"data/databases/{self.database_name}/{self.name}")
 
     def _create_column_locks(self) -> None:
         for column_name in self.columns:

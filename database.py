@@ -195,7 +195,7 @@ class Database:
         """
         self.__validate_create_table(name, columns)
 
-        self.tables[name] = Table(name, columns)
+        self.tables[name] = Table(database_name=self.name, name=name, columns=columns)
 
     def get_table(self, name: str) -> Table:
         """Retrieve a table from the database.
