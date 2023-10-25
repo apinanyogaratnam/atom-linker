@@ -105,4 +105,8 @@ NOTES:
 
 git filter-branch --force --index-filter 'git rm --cached --ignore-unmatch sorter.py.log' --prune-empty --tag-name-filter cat -- --all
 
+
+# THIS PR:
+- create threads to save data to disk after insert/update/delete data + indexes
+
 -->
