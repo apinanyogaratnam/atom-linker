@@ -1,4 +1,5 @@
 import os
+import json
 from collections import defaultdict
 from concurrent.futures import ThreadPoolExecutor
 from threading import Lock
@@ -49,6 +50,8 @@ class Table(GetRecords, Indexes):
         self.columns: Columns = columns
         self.count = 0
         self.records = {}
+
+        self.records_file_lock = Lock()
 
         # TODO: @apinanyogaratnam: need to remove all if conditions that checks wether
         # TODO: the item exists or not to create a new set
@@ -185,6 +188,25 @@ class Table(GetRecords, Indexes):
         })
         self.index_executor.submit(func, *args, **kwargs)
 
+    def save_records_to_disk(self) -> None:
+        """Save the records to disk.
+
+        Args:
+        ----
+        self: The current object.
+
+        Returns:
+        -------
+        None
+        """
+        # NOTE: this is inefficient, need to find a better way to do this
+        # NOTE: this is also not thread safe
+        byte_records = json.dumps(self.records).encode("utf-8")
+        file_path = os.path.join(f"data/databases/{self.database_name}/{self.name}/records")
+        with self.records_file_lock, open(file_path, "wb") as f:
+            f.write(byte_records)
+
+
     def insert_record(self, record: dict[str, Any]) -> int:
         """Insert a record into the instance.
 
@@ -227,6 +249,7 @@ class Table(GetRecords, Indexes):
                     self.inverted_indexes[column_name][word].add(self.count)
 
         self.submit_thread(self._create_records_to_index_thread)
+        self.submit_thread(self.save_records_to_disk)
 
         return self.count
 
