@@ -97,6 +97,7 @@ TODO:
 - ability to store documents i.e. document db like amazon s3 + ability to only return chunks of the document so that the entire document is not loaded into memory at once
 - store blobs? binary large objects
 - use os.path.join for file paths instead of manually adding the path because it will be different on different operating systems
+- use a queue for threads so it will execute in order
 
 NOTES:
 
