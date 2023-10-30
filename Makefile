@@ -15,6 +15,7 @@ truncate-file:
 	truncate -s 0 logs/client.py.log
 	truncate -s 0 logs/protocol.py.log
 	truncate -s 0 logs/stats_enums.py.log
+	rm -rf data
 
 lint:
 	ruff .
