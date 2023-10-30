@@ -1,3 +1,4 @@
+from datetime import datetime
 import os
 import json
 from collections import defaultdict
@@ -188,6 +189,11 @@ class Table(GetRecords, Indexes):
         })
         self.index_executor.submit(func, *args, **kwargs)
 
+    def default_serializer(self, obj):
+        if isinstance(obj, datetime):
+            return obj.strftime("%Y-%m-%d %H:%M:%S")
+        raise TypeError("Type not serializable")
+
     def save_records_to_disk(self) -> None:
         """Save the records to disk.
 
@@ -199,12 +205,26 @@ class Table(GetRecords, Indexes):
         -------
         None
         """
-        # NOTE: this is inefficient, need to find a better way to do this
-        # NOTE: this is also not thread safe
-        byte_records = json.dumps(self.records).encode("utf-8")
-        file_path = os.path.join(f"data/databases/{self.database_name}/{self.name}/records")
-        with self.records_file_lock, open(file_path, "wb") as f:
-            f.write(byte_records)
+        # TODO: this is inefficient, need to find a better way to do this with thread safety
+        # TODO: need to store dates in string format for efficiency
+        try:
+            logger.info(f"Saving records to disk for table {self.name}.")
+            local_records = self.records.copy()
+            for record_id, record in local_records.items():
+                # convert all datetime objects to strings
+                for column_name, column_value in record.items():
+                    if isinstance(column_value, datetime):
+                        local_records[record_id][column_name] = column_value.strftime("%Y-%m-%d %H:%M:%S")
+            byte_records = json.dumps(local_records, default=self.default_serializer).encode("utf-8")
+            logger.info(f'converted records to bytes for table {self.name}.')
+            file_path = f"data/databases/{self.database_name}/{self.name}/records"
+            file_path = os.path.join(file_path)
+            logger.info(f"Saving records to {file_path}.")
+            with self.records_file_lock, open(file_path, "wb") as f:
+                f.write(byte_records)
+        except Exception as e:
+            logger.error(f"Error saving records to disk for table {self.name}.")
+            logger.error(e)
 
 
     def insert_record(self, record: dict[str, Any]) -> int:

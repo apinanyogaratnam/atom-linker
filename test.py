@@ -1,3 +1,4 @@
+import os
 import time
 from datetime import datetime
 from typing import Union
@@ -437,9 +438,20 @@ def test_init_directory_table():
     )
 
 
+def test_save_data_to_disk() -> None:
+    # if os.path.exists("data"):
+    #     print("removing data")
+    #     os.remove("data")
+    db = _create_database()
+    _create_users_table(db)
+    _create_posts_table(db)
+    _create_post(db)
+
+
 if __name__ == "__main__":
     # main()
     # test_inverted_index()
     # test_index()
     # test_init_directory_database()
-    test_init_directory_table()
+    # test_init_directory_table()
+    test_save_data_to_disk()
