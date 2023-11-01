@@ -98,6 +98,7 @@ TODO:
 - store blobs? binary large objects
 - use os.path.join for file paths instead of manually adding the path because it will be different on different operating systems
 - use a queue for threads so it will execute in order
+- use document embedding to find similar documents (cosine similarity)
 
 NOTES:
 
