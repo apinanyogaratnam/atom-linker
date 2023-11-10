@@ -111,5 +111,7 @@ git filter-branch --force --index-filter 'git rm --cached --ignore-unmatch sorte
 
 # THIS PR:
 - create threads to save data to disk after insert/update/delete data + indexes
+- use the compression used in experiments dir to compress the saved data
+- make a get data from file or something
 
 -->
