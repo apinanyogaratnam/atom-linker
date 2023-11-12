@@ -57,6 +57,7 @@ ignore = [
     "TD003", # Missing issue link on the line following this TODO
     "TRY400", # Use `logging.exception` instead of `logging.error`
     "S104", # Possible binding to all interfaces
+    "U",
 ]
 exclude = [
     ".git",
