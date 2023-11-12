@@ -22,3 +22,4 @@ if __name__ == "__main__":
     # Decompress the string
     decompressed_string = decompress_string(compressed_data)
     # print("Decompressed string:", decompressed_string)
+
