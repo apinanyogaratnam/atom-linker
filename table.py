@@ -1,14 +1,15 @@
-from datetime import datetime
-import os
 import json
+import lzma
+import os
 from collections import defaultdict
 from concurrent.futures import ThreadPoolExecutor
+from datetime import datetime
 from threading import Lock
-from typing import Any
+from typing import Any, Dict, List, Set
 
 from get_records import GetRecords
 from indexes import Indexes
-from internal_types import ColumnName, Columns, Index, InvertedIndex, RowId
+from internal_types import ColumnName, Columns, Index, InvertedIndex, Record, RowId
 from log import get_logger
 from stats_enums import StatsType
 from stop_words import STOP_WORDS
@@ -58,7 +59,7 @@ class Table(GetRecords, Indexes):
         # TODO: the item exists or not to create a new set
         self.indexes: Index = defaultdict(lambda: defaultdict(set))
         # can get the column value from the record
-        self.records_to_index: dict[ColumnName, set[RowId]] = defaultdict(set)
+        self.records_to_index: dict[ColumnName, Set[RowId]] = defaultdict(set)
         self.records_to_index_lock = Lock()
         # need to make sure when columns are being CRUD, the lock is also being CRUD
         self.column_locks: dict[ColumnName, Lock] = {}
@@ -99,7 +100,8 @@ class Table(GetRecords, Indexes):
         None
         """
         if os.path.exists(f"data/databases/{self.database_name}/{self.name}"):
-            raise ValueError(f"Table {self.name} directory already exists.")
+            msg = f"Table {self.name} directory already exists."
+            raise ValueError(msg)
 
         os.mkdir(f"data/databases/{self.database_name}/{self.name}")
 
@@ -192,7 +194,8 @@ class Table(GetRecords, Indexes):
     def default_serializer(self, obj):
         if isinstance(obj, datetime):
             return obj.strftime("%Y-%m-%d %H:%M:%S")
-        raise TypeError("Type not serializable")
+        msg = "Type not serializable"
+        raise TypeError(msg)
 
     def save_records_to_disk(self) -> None:
         """Save the records to disk.
@@ -207,6 +210,9 @@ class Table(GetRecords, Indexes):
         """
         # TODO: this is inefficient, need to find a better way to do this with thread safety
         # TODO: need to store dates in string format for efficiency
+        # TODO: need to perform disk operations when for crud operations instead of from memory
+        # + add caching for sql queries with invalidating and making sure changes invalidates
+        # the cache if possible + cache anything that is very broad
         try:
             logger.info(f"Saving records to disk for table {self.name}.")
             local_records = self.records.copy()
@@ -215,8 +221,8 @@ class Table(GetRecords, Indexes):
                 for column_name, column_value in record.items():
                     if isinstance(column_value, datetime):
                         local_records[record_id][column_name] = column_value.strftime("%Y-%m-%d %H:%M:%S")
-            byte_records = json.dumps(local_records, default=self.default_serializer).encode("utf-8")
-            logger.info(f'converted records to bytes for table {self.name}.')
+            byte_records = self.compress_string(json.dumps(local_records, default=self.default_serializer))
+            logger.info(f"converted records to bytes for table {self.name}.")
             file_path = f"data/databases/{self.database_name}/{self.name}/records"
             file_path = os.path.join(file_path)
             logger.info(f"Saving records to {file_path}.")
@@ -225,6 +231,31 @@ class Table(GetRecords, Indexes):
         except Exception as e:
             logger.error(f"Error saving records to disk for table {self.name}.")
             logger.error(e)
+
+    def get_records_from_disk(self) -> List[Record]:
+        """"""
+        file_path = f"data/databases/{self.database_name}/{self.name}/records"
+        file_path = os.path.join(file_path)
+        with self.records_file_lock, open(file_path, "rb") as f:
+            f.seek(0)
+            compressed_records = f.read()
+            logger.info(f"Retrieved records from {file_path}.")
+            records = self.decompress_string(compressed_records)
+            logger.info(f"Decompressed records from {file_path}.")
+            decoded_records = json.loads(records)
+            # self.records = decoded_records
+            logger.info(f"Loaded records from {file_path} to memory.")
+
+        return decoded_records
+
+    @staticmethod
+    def compress_string(input_string):
+        return lzma.compress(input_string.encode())
+
+    @staticmethod
+    def decompress_string(compressed_data):
+        decompressed_data = lzma.decompress(compressed_data)
+        return decompressed_data.decode()
 
 
     def insert_record(self, record: dict[str, Any]) -> int:
@@ -307,7 +338,7 @@ class Table(GetRecords, Indexes):
             msg = f"Record with id {record_id} does not exist."
             raise ValueError(msg)
 
-    def validate_record(self, record: dict[str, Any]) -> None:
+    def validate_record(self, record: Dict[str, Any]) -> None:
         """Validate the arguments for the insert_record and update_record_by_id methods.
 
         Args:
@@ -340,7 +371,7 @@ class Table(GetRecords, Indexes):
                 msg = f"Record value for {column_name} must be {column_type}."
                 raise TypeError(msg)
 
-    def update_record_by_id(self, record_id: int, record: dict[str, Any]) -> object:
+    def update_record_by_id(self, record_id: int, record: Dict[str, Any]) -> object:
         """Update a record in the instance by record_id.
 
         Args:
