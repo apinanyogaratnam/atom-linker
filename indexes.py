@@ -1,5 +1,5 @@
 import string
-
+from typing import Set
 from stop_words import STOP_WORDS
 
 
@@ -21,7 +21,7 @@ class Indexes:
 
     """
 
-    def __sanitize_words(self, words: set[str], stop_words: list[str] = STOP_WORDS) -> set[str]:
+    def __sanitize_words(self, words: Set[str], stop_words: Set[str] = STOP_WORDS) -> Set[str]:
         """Remove case, punctuation, and stop words from words.
 
         Args:
