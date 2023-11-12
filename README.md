@@ -7,6 +7,10 @@ There is no third party packages used in this repo. This is a pure python implem
 This database allows for reading while indexes are being built but reads will be slower
 until the index is finished building (similar to CONCURRENTLY in postgres when creating indexes).
 
+Usage:
+...
+
+# TODO: Use readme template made by faction
 
 <!--
 - indexes
