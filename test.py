@@ -1,4 +1,3 @@
-import os
 import time
 from datetime import datetime
 from typing import Union
@@ -420,7 +419,7 @@ def test_index() -> None:
 
 
 def test_init_directory_database():
-    db = Database("test")
+    Database("test")
 
 
 def test_init_directory_table():
@@ -447,6 +446,11 @@ def test_save_data_to_disk() -> None:
     _create_posts_table(db)
     _create_post(db)
 
+    table = db.get_table("posts")
+    import time
+    time.sleep(10)
+    print(table.get_records_from_disk())
+    # NOTE: unable to test this atm until either I setup save all items to files and read it OR command writing to disk for testing only
 
 if __name__ == "__main__":
     # main()
@@ -455,3 +459,4 @@ if __name__ == "__main__":
     # test_init_directory_database()
     # test_init_directory_table()
     test_save_data_to_disk()
+
