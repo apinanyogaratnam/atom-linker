@@ -1,4 +1,4 @@
-from typing import Any
+from typing import Any, Set
 
 # Record is a table row
 Record = dict[str, Any] # Dict[str, Union[str, int, float, bool, None]]
@@ -16,7 +16,8 @@ Word = str
 Columns = dict[ColumnName, type]
 
 # Index is a column index
-Index = dict[ColumnName, set[RowId]]
+Index = dict[ColumnName, Set[RowId]] # NOTE: need to figure out how to represent this with defaultdict
 
 # InvertedIndex is a word index that maps a specific word to a set of row ids
 InvertedIndex = dict[ColumnName, dict[Word, set[RowId]]]
+
