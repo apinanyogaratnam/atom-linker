@@ -352,7 +352,7 @@ class Database:
             None
         """
         if not records:
-            return records
+            return
 
         records.sort(key=lambda x: x[sort_by], reverse=reverse)
         return None
