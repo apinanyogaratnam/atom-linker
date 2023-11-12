@@ -1,4 +1,4 @@
-
+from typing import Any
 from indexes import Indexes
 from internal_types import ColumnName, Record
 from log import get_logger
@@ -12,7 +12,7 @@ class GetRecords(Indexes):
     def __init__(self) -> None:
         """Initialize a new instance of Get."""
 
-    def get_records(self) -> list[object]:
+    def get_records(self) -> list[dict[str, Any]]:
         """Get records from the instance.
 
         Args:
@@ -25,7 +25,7 @@ class GetRecords(Indexes):
         """
         return list(self.records.values())
 
-    def get_records_by_column(self, column_name: str, column_value: object) -> list[object]:
+    def get_records_by_column(self, column_name: str, column_value: object) -> list[dict[str, Any]]:
         """Get records from the instance by column_name and column_value.
 
         Args:
